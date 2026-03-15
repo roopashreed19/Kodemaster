@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #0f172a; /* Dark Navy */
+  color: #f8fafc;
+}
+
+input {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: white;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+button {
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+button:hover {
+  filter: brightness(1.2);
+  transform: translateY(-2px);
+}
