@@ -22,7 +22,7 @@ const Auth = () => {
     
     try {
       const res = await api.post(endpoint, formData);
-      // Store the token so the user stays logged in
+      
       localStorage.setItem('token', res.data.token);
       
       alert(isLogin ? "Welcome back, Kodemaster!" : "Character Created! Welcome to the Kingdom.");

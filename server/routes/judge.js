@@ -4,7 +4,6 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// Ensure a 'temp' directory exists for code execution
 const tempDir = path.join(__dirname, '../temp');
 if (!fs.existsSync(tempDir)) {
     fs.mkdirSync(tempDir);
@@ -12,62 +11,135 @@ if (!fs.existsSync(tempDir)) {
 
 router.post('/run', async (req, res) => {
     const { code, language, testCases } = req.body;
-    
-    // 1. Setup language-specific configuration
     const filename = `quest_${Date.now()}`;
     let filePath = '';
     let command = '';
+    let compileCommand = '';
+
+    // 1. Wrap code based on language to inject test cases automatically
+    let wrappedCode = code;
 
     if (language === 'javascript') {
         filePath = path.join(tempDir, `${filename}.js`);
+        wrappedCode += `
+            const testCases = ${JSON.stringify(testCases)};
+            testCases.forEach((tc, index) => {
+                try {
+                    const args = JSON.parse("[" + tc.input + "]"); 
+                    const result = solve(...args);
+                    process.stdout.write(result.toString() + (index < testCases.length - 1 ? "###" : ""));
+                } catch (e) {
+                    process.stderr.write("Runtime Error in test case " + (index + 1));
+                }
+            });
+        `;
         command = `node ${filePath}`;
     } else if (language === 'python') {
         filePath = path.join(tempDir, `${filename}.py`);
+        wrappedCode += `
+import json
+test_cases = ${JSON.stringify(testCases)}
+for i, tc in enumerate(test_cases):
+    try:
+        args = json.loads("[" + tc.input + "]")
+        print(solve(*args), end=("###" if i < len(test_cases) - 1 else ""))
+    except Exception as e:
+        import sys
+        sys.stderr.write("Runtime Error")
+        `;
         command = `python ${filePath}`;
-    } else {
-        return res.status(400).json({ error: "Language not supported yet!" });
+    } else if (language === 'cpp') {
+        filePath = path.join(tempDir, `${filename}.cpp`);
+        const cppExe = path.join(tempDir, `${filename}.exe`);
+        // Note: For C++/Java, it's easier to have the user handle I/O or use a more complex header.
+        // For now, we'll keep the standard compilation.
+        compileCommand = `g++ "${filePath}" -o "${cppExe}"`;
+        command = `"${cppExe}"`;
+    } else if (language === 'java') {
+        filePath = path.join(tempDir, `Solution.java`);
+        compileCommand = `javac "${filePath}"`;
+        command = `java -cp "${tempDir}" Solution`;
     }
 
-    // 2. Write the code to a temporary file
     try {
-        fs.writeFileSync(filePath, code);
+        // Write the wrapped code to file
+        fs.writeFileSync(filePath, wrappedCode);
 
-        // 3. Execute the code
-        // We use a 5-second timeout to prevent the server from hanging
-        exec(command, { timeout: 5000 }, (error, stdout, stderr) => {
-            // Cleanup: Always delete the file regardless of outcome
-            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-
-            if (error) {
-                if (error.killed) return res.json({ success: false, output: "Time Limit Exceeded (Max 5s)" });
-                return res.json({ success: false, output: stderr || error.message });
-            }
-
-            const userOutput = stdout.trim();
-            
-            // 4. Validate against Test Cases (Simple Example)
-            // Expecting testCases to be an array: [{input: '...', expected: '...'}]
-            let results = [];
-            let allPassed = true;
-
-            if (testCases && testCases.length > 0) {
-                // For a single-run setup, we check if stdout matches the first expected output
-                if (userOutput !== testCases[0].expected.trim()) {
-                    allPassed = false;
-                }
-            }
-
-            res.json({
-                success: allPassed,
-                output: userOutput,
-                message: allPassed ? "✅ Test Case Passed!" : "❌ Wrong Answer"
+        const execute = (cmd) => {
+            return new Promise((resolve) => {
+                exec(cmd, { timeout: 5000 }, (error, stdout, stderr) => {
+                    resolve({ error, stdout, stderr });
+                });
             });
+        };
+
+        // 2. Compilation Step
+        if (compileCommand) {
+            const compileResult = await execute(compileCommand);
+            if (compileResult.error) {
+                cleanup(filePath);
+                return res.json({ 
+                    success: false, 
+                    output: compileResult.stderr || compileResult.error.message,
+                    message: "⚔️ Compilation Error" 
+                });
+            }
+        }
+
+        // 3. Execution Step
+        const runResult = await execute(command);
+        cleanup(filePath);
+
+        if (runResult.error) {
+            return res.json({ 
+                success: false, 
+                output: runResult.stderr || "Runtime Error", 
+                message: "❌ Defeat" 
+            });
+        }
+
+        const rawOutput = runResult.stdout.trim();
+        // Split outputs by our delimiter to check multiple test cases
+        const userResults = rawOutput.split("###");
+        
+        let allPassed = true;
+        let feedback = "";
+
+        if (testCases && testCases.length > 0) {
+            testCases.forEach((tc, index) => {
+                const expected = tc.expected.toString().trim();
+                const actual = userResults[index] ? userResults[index].trim() : "No Output";
+                
+                if (actual !== expected) {
+                    allPassed = false;
+                    feedback += `TC ${index + 1}: Expected ${expected}, got ${actual}\n`;
+                } else {
+                    feedback += `TC ${index + 1}: Passed ✅\n`;
+                }
+            });
+        }
+
+        res.json({
+            success: allPassed,
+            output: feedback || rawOutput,
+            message: allPassed ? "✅ Victory! All Test Cases Passed." : "❌ Wrong Answer"
         });
 
     } catch (err) {
-        console.error("Execution Error:", err);
-        res.status(500).json({ error: "Guardian Error: The Judge is unavailable." });
+        console.error(err);
+        res.status(500).json({ error: "The Judge is busy." });
     }
 });
+
+function cleanup(filePath) {
+    try {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        const base = filePath.split('.').slice(0, -1).join('.');
+        if (fs.existsSync(`${base}.exe`)) fs.unlinkSync(`${base}.exe`);
+        if (fs.existsSync(`${base}.class`)) fs.unlinkSync(`${base}.class`);
+    } catch (e) {
+        console.error("Cleanup error", e);
+    }
+}
 
 module.exports = router;
