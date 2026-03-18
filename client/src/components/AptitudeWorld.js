@@ -12,7 +12,7 @@ const AptitudeWorld = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-      
+
         const response = await api.get('/aptitude/all');
         setTopics(response.data);
       } catch (err) {
@@ -26,15 +26,12 @@ const AptitudeWorld = () => {
 
   return (
     <div className="aptitude-world-container" style={{ minHeight: '100vh', background: '#020617', padding: '40px' }}>
-   
-      <button 
-        className="back-btn" 
+      <button
         onClick={() => navigate('/dashboard')}
-        style={{ color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '40px' }}
+        style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}
       >
-        <LayoutDashboard size={20} /> Dashboard
+        <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
       </button>
-
       <header style={{ textAlign: 'center', marginBottom: '60px' }}>
         <h1 style={{ fontSize: '3rem', color: '#fff', marginBottom: '10px' }}>APTITUDE ARENA</h1>
         <p style={{ color: '#94a3b8' }}>Sharpen your logical blades for the final interview battle.</p>
@@ -64,7 +61,7 @@ const AptitudeWorld = () => {
               </div>
               <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '10px' }}>{topic.title}</h3>
               <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '20px' }}>{topic.questions.length} Challenges</p>
-              
+
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <span style={{ color: '#fbbf24', fontSize: '0.8rem', fontWeight: 'bold' }}>+ {topic.questions.length * 10} XP</span>
                 <ChevronRight color="#fbbf24" />

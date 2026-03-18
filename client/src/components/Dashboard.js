@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpen, Database, Cpu, Globe, Trophy, Zap, Coins, Code2, Flame } from 'lucide-react';
+import { BookOpen, Database, Cpu, Globe, Trophy, Zap, Coins, Code2, Flame, Box } from 'lucide-react';
 import ContestTimer from './ContestTimer';
 import { Network } from 'lucide-react';
 
@@ -9,7 +9,7 @@ import { Network } from 'lucide-react';
 const subjects = [
   { id: 'dsa', name: 'DSA Dungeon', icon: <BookOpen size={40} />, color: '#f87171', lore: 'Master the ancient art of Algorithms.' },
   { id: 'dbms', name: 'DBMS Kingdom', icon: <Database size={40} />, color: '#60a5fa', lore: 'Conquer the Relational schemas.' },
-  { id: 'cp-arena', name: 'OOPs Arena', icon: <Code2 size={40} />, color: '#c084fc', lore: 'Battle in real-time coding contests.' },
+  { id: 'oops', name: 'OOPs Oasis', icon: <Box size={40} />, color: '#c084fc', lore: 'Master the principles of Object-Oriented Design.' },
   { 
     id: 'cn',
     name: 'CN Arena', 

@@ -14,14 +14,14 @@ const AptitudeArena = () => {
 
 
   const [topicData, setTopicData] = useState(null);
-  const [activePhase, setActivePhase] = useState('study'); 
+  const [activePhase, setActivePhase] = useState('study');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
 
- 
+
   useEffect(() => {
     const fetchTopic = async () => {
       try {
@@ -40,13 +40,13 @@ const AptitudeArena = () => {
   const saveProgress = useCallback(async (finalScore) => {
     try {
       const xpEarned = finalScore * 10;
-    
-      await api.post('/user/add-xp', { 
+
+      await api.post('/user/add-xp', {
         xp: xpEarned,
         topicId: topicId,
-        score: finalScore 
+        score: finalScore
       });
-      console.log(`🏆 Added ${xpEarned} XP to the hero's journey!`);
+      console.log(`Added ${xpEarned} XP to the hero's journey!`);
     } catch (err) {
       console.error("Failed to sync XP with the Citadel:", err);
     }
@@ -57,7 +57,7 @@ const AptitudeArena = () => {
     if (isAnswered) return;
     setSelectedOption(option);
     setIsAnswered(true);
-    
+
     if (option === topicData.questions[currentQuestionIndex].correctAnswer) {
       setScore(prev => prev + 1);
     }
@@ -69,7 +69,7 @@ const AptitudeArena = () => {
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
-   
+
       saveProgress(score);
       setActivePhase('result');
     }
@@ -80,15 +80,20 @@ const AptitudeArena = () => {
 
   return (
     <div className="aptitude-container" style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
-      
- 
-      <button className="back-btn" onClick={() => navigate('/world/aptitude')} style={{ position: 'fixed', top: '20px', left: '20px', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <LayoutDashboard size={20} /> Back to Arena
-      </button>
+
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <button className="back-btn" onClick={() => navigate('/world/aptitude')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <LayoutDashboard size={20} /> Back to Aptitude Arena
+        </button>
+        <button className="back-btn" onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <LayoutDashboard size={20} /> Return to Dashboard
+        </button>
+      </div>
 
       <div className="content-wrapper" style={{ maxWidth: '800px', margin: '0 auto' }}>
-        
-      
+
+
         {activePhase === 'study' && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="scroll-of-knowledge" style={{ background: '#1e293b', padding: '40px', borderRadius: '24px', border: '1px solid #334155' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#fbbf24', marginBottom: '20px' }}>
@@ -97,7 +102,7 @@ const AptitudeArena = () => {
             </div>
             <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>{topicData.conceptTitle}</h1>
             <p style={{ fontSize: '1.1rem', lineHeight: '1.8', color: '#cbd5e1', marginBottom: '30px' }}>{topicData.conceptDescription}</p>
-            
+
             <div className="formula-box" style={{ background: '#0f172a', padding: '25px', borderRadius: '12px', marginBottom: '40px' }}>
               <h4 style={{ color: '#94a3b8', marginBottom: '15px', fontSize: '0.9rem', letterSpacing: '1px' }}>CORE FORMULAS</h4>
               {topicData.formulas.map((f, i) => (
@@ -113,13 +118,13 @@ const AptitudeArena = () => {
           </motion.div>
         )}
 
-       
+
         {activePhase === 'battle' && (
           <div className="battle-quiz">
             <div className="quiz-header" style={{ marginBottom: '40px', textAlign: 'center' }}>
               <span style={{ color: '#94a3b8' }}>Question {currentQuestionIndex + 1} of {topicData.questions.length}</span>
               <div className="progress-bar-bg" style={{ width: '100%', height: '8px', background: '#334155', borderRadius: '4px', marginTop: '10px' }}>
-                <div className="progress-fill" style={{ width: `${((currentQuestionIndex + 1) / topicData.questions.length) * 100}%`, height: '100%', background: '#fbbf24', borderRadius: '4px', transition: 'width 0.3s' }}></div>
+                <div className="progress-fill" style={{ width: `${(currentQuestionIndex / topicData.questions.length) * 100}%`, height: '100%', background: '#fbbf24', borderRadius: '4px', transition: 'width 0.3s' }}></div>
               </div>
             </div>
 
@@ -131,7 +136,7 @@ const AptitudeArena = () => {
               {topicData.questions[currentQuestionIndex].options.map((option, idx) => {
                 const isCorrect = option === topicData.questions[currentQuestionIndex].correctAnswer;
                 const isSelected = selectedOption === option;
-                
+
                 let borderColor = '#334155';
                 if (isAnswered) {
                   if (isCorrect) borderColor = '#22c55e';
@@ -184,8 +189,11 @@ const AptitudeArena = () => {
             <div style={{ padding: '20px', background: '#0f172a', borderRadius: '12px', display: 'inline-block', marginBottom: '30px' }}>
               <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>+{score * 10} XP EARNED</span>
             </div>
-            <button onClick={() => navigate('/world/aptitude')} style={{ display: 'block', width: '100%', padding: '15px', background: '#334155', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 'bold', cursor: 'pointer' }}>
-              RETURN TO ARENA
+            <button onClick={() => navigate('/world/aptitude')} style={{ display: 'block', width: '100%', padding: '15px', background: '#334155', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' }}>
+              RETURN TO APTITUDE ARENA
+            </button>
+            <button onClick={() => navigate('/dashboard')} style={{ display: 'block', width: '100%', padding: '15px', background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', color: '#94a3b8', fontWeight: 'bold', cursor: 'pointer' }}>
+              RETURN TO DASHBOARD
             </button>
           </motion.div>
         )}
