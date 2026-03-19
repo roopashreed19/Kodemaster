@@ -1,6 +1,6 @@
 
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') }); 
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const express = require('express');
 const mongoose = require('mongoose');
@@ -14,8 +14,8 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: 'http://localhost:3000', 
-  credentials: true 
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
 // 3. Debugging Logs
@@ -36,6 +36,7 @@ app.use('/api/user', require('./routes/user'));
 app.use('/api/challenges', require('./routes/challenges'));
 app.use('/api/aptitude', require('./routes/Aptitude'));
 app.use('/api/cn', require('./routes/cn'));
+app.use('/api/dbms', require('./routes/dbms'));
 // 6. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
