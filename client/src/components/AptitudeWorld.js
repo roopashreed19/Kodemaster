@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Brain, LayoutDashboard, Zap, ChevronRight,ChevronLeft, Sparkles } from 'lucide-react';
 import api from '../utils/api';
 
+
 const AptitudeWorld = () => {
   const navigate = useNavigate();
   const [topics, setTopics] = useState([]);

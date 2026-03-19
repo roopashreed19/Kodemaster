@@ -16,4 +16,6 @@ const cnSchema = new mongoose.Schema({
 });
 
 
+
+
 module.exports = mongoose.model('CNArena', cnSchema, 'cn_quests');

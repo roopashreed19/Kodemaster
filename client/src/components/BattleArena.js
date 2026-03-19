@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { Scroll, Terminal, Play, Zap, ChevronLeft, Loader2 } from 'lucide-react';
 import { challenges as localChallenges } from '../data/challenges.js'; 
 import api from '../utils/api'; 
+import { handleQuestVictory } from '../utils/questHelper';
 
 const BattleArena = () => {
   const { subject, floorId, questionId } = useParams();

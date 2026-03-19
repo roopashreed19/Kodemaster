@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { BookOpen, Sword, CheckCircle2, XCircle, ChevronRight, LayoutDashboard, Star } from 'lucide-react';
 import api from '../utils/api';
 
-
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 

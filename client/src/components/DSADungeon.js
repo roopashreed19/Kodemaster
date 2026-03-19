@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, Play, X, Star, Loader2, LayoutDashboard } from 'lucide-react';
 import { challenges as localChallenges } from '../data/challenges'; 
 import api from '../utils/api'; 
+import { handleQuestVictory } from '../utils/questHelper';
 
 const floors = [
   { id: 1, name: "Array Abyss", status: "unlocked", difficulty: "Easy", color: "#f87171" },

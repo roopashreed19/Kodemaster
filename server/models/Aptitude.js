@@ -17,4 +17,6 @@ const AptitudeSchema = new mongoose.Schema({
 });
 
 
+
+
 module.exports = mongoose.model('Aptitude', AptitudeSchema, 'aptitudes');

@@ -12,6 +12,9 @@ import CNArenaWorld from './components/CNArenaWorld';
 import LandingPage from './components/LandingPage';
 import DBMSWorld from './components/DBMSWorld';
 import DBMSQuest from './components/DBMSQuest';
+import Arcade from './components/Arcade';
+import Logic2048 from './components/games/MemoryMatch';
+import TicTacToe from './components/games/TicTacToe';
 
 function App() {
   return (
@@ -28,6 +31,9 @@ function App() {
         <Route path="/world/cn/:topicId" element={<CNArenaQuest />} />
         <Route path="/world/dbms" element={<DBMSWorld />} />
         <Route path="/world/dbms/:topicId" element={<DBMSQuest />} />
+        <Route path="/arcade" element={<Arcade />} />
+        <Route path="/games/2048" element={<Logic2048 />} />
+        <Route path="/games/tictactoe" element={<TicTacToe />} />
       </Routes>
     </Router>
   );
