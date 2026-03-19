@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BookOpen, Sword, CheckCircle2, XCircle, ChevronRight, LayoutDashboard, Star } from 'lucide-react';
+import { BookOpen, Sword, CheckCircle2, XCircle, ChevronRight, LayoutDashboard, Star, AlertTriangle } from 'lucide-react';
 import api from '../utils/api';
 
 
@@ -20,6 +20,8 @@ const AptitudeArena = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [showFinishModal, setShowFinishModal] = useState(false);
 
 
   useEffect(() => {
@@ -44,6 +46,8 @@ const AptitudeArena = () => {
       await api.post('/user/add-xp', {
         xp: xpEarned,
         topicId: topicId,
+        subject: 'Aptitude',
+        status: finalScore > 0 ? 'success' : 'failed',
         score: finalScore
       });
       console.log(`Added ${xpEarned} XP to the hero's journey!`);
@@ -63,16 +67,22 @@ const AptitudeArena = () => {
     }
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     if (currentQuestionIndex < topicData.questions.length - 1) {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
-
-      saveProgress(score);
-      setActivePhase('result');
+      setShowFinishModal(true);
     }
+  };
+
+  const finalizeTest = async () => {
+    setShowFinishModal(false);
+    setIsSyncing(true);
+    await saveProgress(score);
+    setIsSyncing(false);
+    setActivePhase('result');
   };
 
   if (loading) return <div className="loading-screen">Consulting the Sages...</div>;
@@ -172,11 +182,50 @@ const AptitudeArena = () => {
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: '30px', padding: '20px', background: '#0f172a', borderRadius: '12px', borderLeft: '4px solid #fbbf24' }}>
                 <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '5px' }}>EXPLANATION</p>
                 <p>{topicData.questions[currentQuestionIndex].explanation}</p>
-                <button onClick={nextQuestion} style={{ marginTop: '20px', background: '#fbbf24', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', float: 'right' }}>
-                  Next Question <ChevronRight size={18} />
+                <button 
+                  onClick={nextQuestion} 
+                  disabled={isSyncing}
+                  style={{ marginTop: '20px', background: isSyncing ? '#475569' : '#fbbf24', color: isSyncing ? 'white' : '#000', border: 'none', padding: '10px 20px', borderRadius: '8px', fontWeight: 'bold', cursor: isSyncing ? 'not-allowed' : 'pointer', float: 'right', display: 'flex', alignItems: 'center', gap: '5px' }}
+                >
+                  {isSyncing ? 'Syncing...' : (currentQuestionIndex < topicData.questions.length - 1 ? 'Next Question' : 'Finish Test')} <ChevronRight size={18} />
                 </button>
               </motion.div>
             )}
+
+            <AnimatePresence>
+              {showFinishModal && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                  <motion.div
+                    initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                    style={{ background: '#1e293b', border: '1px solid #fbbf24', borderRadius: '24px', padding: '40px', maxWidth: '500px', width: '100%', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
+                  >
+                    <div style={{ background: 'rgba(251, 191, 36, 0.1)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 25px', color: '#fbbf24' }}>
+                      <AlertTriangle size={40} />
+                    </div>
+                    <h2 style={{ fontSize: '2rem', color: '#f8fafc', marginBottom: '15px' }}>Finalize Gauntlet?</h2>
+                    <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '35px' }}>
+                      You are about to submit your findings to the Great Library history. This will finalize your XP and score.
+                    </p>
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                      <button
+                        onClick={() => setShowFinishModal(false)}
+                        style={{ flex: 1, padding: '15px', background: 'transparent', border: '1px solid #334155', color: '#94a3b8', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                      >
+                        WAIT
+                      </button>
+                      <button
+                        onClick={finalizeTest}
+                        style={{ flex: 1, padding: '15px', background: '#fbbf24', border: 'none', color: '#000', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                      >
+                        FINISH
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 

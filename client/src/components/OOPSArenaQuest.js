@@ -9,7 +9,8 @@ import {
   XCircle,
   Trophy,
   Info,
-  Hammer
+  Hammer,
+  AlertTriangle
 } from 'lucide-react';
 import api from '../utils/api';
 
@@ -24,6 +25,8 @@ const OOPSArenaQuest = () => {
   const [isAnswered, setIsAnswered] = useState(false);
   const [score, setScore] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [showFinishModal, setShowFinishModal] = useState(false);
 
   useEffect(() => {
     const fetchQuest = async () => {
@@ -45,6 +48,9 @@ const OOPSArenaQuest = () => {
       await api.post('/user/add-xp', {
         xp: xpPoints,
         topicId: topicId,
+        subject: 'OOPS',
+        status: finalScore > 0 ? 'success' : 'failed',
+        score: finalScore,
         type: 'OOPS_QUEST'
       });
     } catch (err) {
@@ -61,15 +67,22 @@ const OOPSArenaQuest = () => {
     }
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (currentQ < data.questions.length - 1) {
       setCurrentQ(prev => prev + 1);
       setSelectedOption(null);
       setIsAnswered(false);
     } else {
-      saveXP(score);
-      setPhase('result');
+      setShowFinishModal(true);
     }
+  };
+
+  const finalizeTest = async () => {
+    setShowFinishModal(false);
+    setIsSyncing(true);
+    await saveXP(score);
+    setIsSyncing(false);
+    setPhase('result');
   };
 
   if (loading) return <div className="terminal-loader">Loading Class Schematics...</div>;
@@ -161,11 +174,50 @@ const OOPSArenaQuest = () => {
                 <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ marginTop: '30px', padding: '25px', background: '#3b0764', borderRadius: '15px', border: '1px solid #7e22ce' }}>
                   <p style={{ color: '#d8b4fe', fontWeight: 'bold', marginBottom: '10px' }}>COMPILER ANALYSIS:</p>
                   <p style={{ lineHeight: '1.6' }}>{data.questions[currentQ].explanation}</p>
-                  <button onClick={nextStep} style={{ float: 'right', marginTop: '15px', background: '#a855f7', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    Next Question <ChevronRight size={18} />
+                  <button 
+                    onClick={nextStep} 
+                    disabled={isSyncing}
+                    style={{ float: 'right', marginTop: '15px', background: isSyncing ? '#475569' : '#a855f7', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: isSyncing ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  >
+                    {isSyncing ? 'Syncing...' : (currentQ < data.questions.length - 1 ? 'Next Question' : 'Finish Test')} <ChevronRight size={18} />
                   </button>
                 </motion.div>
               )}
+
+              <AnimatePresence>
+                {showFinishModal && (
+                  <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                      style={{ background: '#1e293b', border: '1px solid #a855f7', borderRadius: '24px', padding: '40px', maxWidth: '500px', width: '100%', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
+                    >
+                      <div style={{ background: 'rgba(168, 85, 247, 0.1)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 25px', color: '#a855f7' }}>
+                        <AlertTriangle size={40} />
+                      </div>
+                      <h2 style={{ fontSize: '2rem', color: '#f8fafc', marginBottom: '15px' }}>Finalize Instance?</h2>
+                      <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '35px' }}>
+                        You are about to persist your object states to the global history. This will finalize your XP and score.
+                      </p>
+                      <div style={{ display: 'flex', gap: '15px' }}>
+                        <button
+                          onClick={() => setShowFinishModal(false)}
+                          style={{ flex: 1, padding: '15px', background: 'transparent', border: '1px solid #334155', color: '#94a3b8', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                          ABORT
+                        </button>
+                        <button
+                          onClick={finalizeTest}
+                          style={{ flex: 1, padding: '15px', background: '#a855f7', border: 'none', color: 'white', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                        >
+                          CONFIRM
+                        </button>
+                      </div>
+                    </motion.div>
+                  </div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
