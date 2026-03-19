@@ -13,14 +13,14 @@ const OSOutpost = () => {
     const fetchOSData = async () => {
       try {
         const res = await axios.get('http://localhost:5000/api/challenges/os');
-        
+
         // Group 300 questions into 10 floors
         const grouped = res.data.reduce((acc, q) => {
           if (!acc[q.floorId]) {
-            acc[q.floorId] = { 
-              floorId: q.floorId, 
-              floorName: q.floorName, 
-              questions: [] 
+            acc[q.floorId] = {
+              floorId: q.floorId,
+              floorName: q.floorName,
+              questions: []
             };
           }
           acc[q.floorId].questions.push(q);
@@ -33,7 +33,7 @@ const OSOutpost = () => {
           const numB = parseInt(b.floorId.replace('floor', ''));
           return numA - numB;
         });
-        
+
         setFloors(sorted);
       } catch (err) {
         console.error("Linker Error:", err);
@@ -53,11 +53,11 @@ const OSOutpost = () => {
   return (
     // Applied the OOPS Oasis theme colors and font
     <div className="os-outpost-theme" style={{ background: '#030712', minHeight: '100vh', color: '#fff', fontFamily: "'Inter', sans-serif", padding: '40px' }}>
-      
+
       {/* HEADER: Matching OOPS style */}
-      <header style={{ marginBottom: '60px', position: 'relative', z-index: 2 }}>
-        <button 
-          onClick={() => navigate('/dashboard')} 
+      <header style={{ marginBottom: '60px', position: 'relative', zIndex: 2 }}>
+        <button
+          onClick={() => navigate('/dashboard')}
           style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.9rem', marginBottom: '30px' }}
         >
           <ChevronLeft size={16} /> Back to Dashboard
@@ -76,12 +76,12 @@ const OSOutpost = () => {
       </header>
 
       {/* BACKGROUND GLOW */}
-      <div style={{ position: 'fixed', top: '10%', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, transparent 70%)', filter: 'blur(80px)', z-index: 1 }}></div>
+      <div style={{ position: 'fixed', top: '10%', right: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, transparent 70%)', filter: 'blur(80px)', zIndex: 1 }}></div>
 
       {/* GRID: 3 columns matching image 5 */}
-      <div className="world-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px', position: 'relative', z-index: 2 }}>
+      <div className="world-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px', position: 'relative', zIndex: 2 }}>
         {floors.map((floor, index) => (
-          <motion.div 
+          <motion.div
             key={floor.floorId}
             whileHover={{ y: -5, borderColor: '#a78bfa' }}
             style={{
@@ -107,7 +107,7 @@ const OSOutpost = () => {
               <h3 style={{ fontSize: '1.8rem', fontWeight: '800', color: '#fff', margin: '0 0 10px 0' }}>
                 {floor.floorName}
               </h3>
-              
+
               <p style={{ color: '#64748b', fontSize: '1rem' }}>
                 SECTOR_0{index + 1} // KERNEL // PRIVILEGED
               </p>

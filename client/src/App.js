@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Auth from './components/Auth';
 import Dashboard from './components/Dashboard';
 import AptitudeWorld from './components/AptitudeWorld';
 import DSADungeon from './components/DSADungeon';
 import BattleArena from './components/BattleArena';
 import OSOutpost from './components/OSOutpost';
-import OSOutpostArena from './components/OSOutpostArena'; 
+import OSOutpostArena from './components/OSOutpostArena';
 import SectorBriefing from './components/SectorBriefing';
-import FloorSummary from './components/FloorSummary'; 
+import FloorSummary from './components/FloorSummary';
 import './App.css';
 import AptitudeArena from './components/AptitudeArena';
 import CNArenaQuest from './components/CNArenaQuest';
@@ -22,6 +22,10 @@ import DBMSQuest from './components/DBMSQuest';
 import Arcade from './components/Arcade';
 import MemoryMatch from './components/games/MemoryMatch';
 import TicTacToe from './components/games/TicTacToe';
+import Wordle from './components/games/Wordle';
+import SlidingPuzzle from './components/games/SlidingPuzzle';
+import Pacman from './components/games/Pacman';
+import CipherSearch from './components/games/CipherSearch';
 
 function App() {
   return (
@@ -31,7 +35,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        
+
         <Route path="/world/dsa" element={<DSADungeon />} />
         <Route path="/arena/dsa/:floorId/:questionId" element={<BattleArena />} />
 
@@ -51,10 +55,19 @@ function App() {
 
         <Route path="/world/dbms" element={<DBMSWorld />} />
         <Route path="/world/dbms/:topicId" element={<DBMSQuest />} />
-        
+
         <Route path="/arcade" element={<Arcade />} />
         <Route path="/games/memory" element={<MemoryMatch />} />
         <Route path="/games/tictactoe" element={<TicTacToe />} />
+        <Route path="/games/wordle" element={<Wordle />} />
+        <Route path="/games/sliding-puzzle" element={<SlidingPuzzle />} />
+        <Route path="/games/pacman" element={<Pacman />} />
+        <Route path="/games/wordsearch" element={<CipherSearch />} />
+
+        {/* Generic arena route from incoming changes */}
+        <Route path="/arena/:subject/:floorId/:questionId" element={<BattleArena />} />
+
+        {/* Error route from existing changes */}
         <Route path="*" element={<div className="error-screen">404: SECTOR NOT FOUND</div>} />
       </Routes>
     </Router>

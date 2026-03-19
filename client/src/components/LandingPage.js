@@ -68,7 +68,7 @@ const LandingPage = () => {
             <Zap color="#fff" fill="#fff" size={20} />
           </div>
           <span style={{ background: 'linear-gradient(to right, #fff, #94a3b8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            FORGEMIND
+            CODEQUEST
           </span>
         </div>
         <div style={{ display: 'flex', gap: '35px', alignItems: 'center' }}>
@@ -108,7 +108,7 @@ const LandingPage = () => {
         </motion.h1>
         
         <motion.p variants={itemVariants} style={{ fontSize: '1.4rem', color: '#94a3b8', maxWidth: '800px', margin: '0 auto 50px', lineHeight: '1.6' }}>
-          ForgeMind transforms complex engineering domains into interactive, high-stakes arenas. Validate your technical mastery across OS, OOPs, DSA, and Networking.
+          CodeQuest transforms complex engineering domains into interactive, high-stakes arenas. Validate your technical mastery across OS, OOPs, DSA, and Networking.
         </motion.p>
 
         <motion.div variants={itemVariants}>
@@ -118,7 +118,7 @@ const LandingPage = () => {
             onClick={() => navigate('/auth')}
             style={{ padding: '22px 50px', fontSize: '1.2rem', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '16px', fontWeight: '800', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', margin: '0 auto' }}
           >
-            INITIALIZE FORGE <ArrowRight size={22} />
+            GET STARTED <ArrowRight size={22} />
           </motion.button>
         </motion.div>
       </motion.section>
@@ -135,9 +135,9 @@ const LandingPage = () => {
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: 30 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 0.8 }} style={{ padding: '40px', background: 'rgba(30, 41, 59, 0.3)', borderRadius: '24px', border: '1px solid rgba(34, 212, 191, 0.2)' }}>
-            <h2 style={{ color: '#22d4bf', marginBottom: '20px', fontSize: '2rem' }}>The ForgeMind Solution</h2>
+            <h2 style={{ color: '#22d4bf', marginBottom: '20px', fontSize: '2rem' }}>The CodeQuest Solution</h2>
             <p style={{ fontSize: '1.15rem', color: '#cbd5e1', lineHeight: '1.8' }}>
-              We provide an integrated ecosystem where <b>OS Threads</b>, <b>OOPs Principles</b>, and <b>Network Protocols</b> are taught through gamified action. By simulating real-world system behaviors, ForgeMind replaces rote learning with practical logical intuition and quantifiable progress.
+              We provide an integrated ecosystem where <b>OS Threads</b>, <b>OOPs Principles</b>, and <b>Network Protocols</b> are taught through gamified action. By simulating real-world system behaviors, CodeQuest replaces rote learning with practical logical intuition and quantifiable progress.
             </p>
           </motion.div>
         </div>
