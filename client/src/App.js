@@ -10,6 +10,8 @@ import AptitudeArena from './components/AptitudeArena';
 import CNArenaQuest from './components/CNArenaQuest';
 import CNArenaWorld from './components/CNArenaWorld';
 import LandingPage from './components/LandingPage';
+import DBMSWorld from './components/DBMSWorld';
+import DBMSQuest from './components/DBMSQuest';
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Route path="/aptitude-arena/:topicId" element={<AptitudeArena />} />
         <Route path="/world/cn" element={<CNArenaWorld />} />
         <Route path="/world/cn/:topicId" element={<CNArenaQuest />} />
+        <Route path="/world/dbms" element={<DBMSWorld />} />
+        <Route path="/world/dbms/:topicId" element={<DBMSQuest />} />
       </Routes>
     </Router>
   );
