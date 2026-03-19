@@ -8,6 +8,8 @@ const TicTacToe = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [showVictory, setShowVictory] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
   const navigate = useNavigate();
 
   const calculateWinner = (squares) => {
@@ -112,7 +114,9 @@ const TicTacToe = () => {
         status: 'success',
         score: 100
       });
-      alert("Grandmaster Victory! +50 XP authorized.");
+      setPopupText("Grandmaster Victory! +20 XP +30 COINS awarded.");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2200);
       navigate('/arcade');
     } catch (err) {
       console.error('Reward claim failed:', err);
@@ -124,7 +128,7 @@ const TicTacToe = () => {
     <div style={{ minHeight: '100vh', background: '#020617', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', position: 'relative', fontFamily: 'Inter, sans-serif' }}>
       
       <button 
-        onClick={() => navigate('/dashboard')} 
+        onClick={() => navigate('/arcade')} 
         style={{ 
           position: 'absolute', top: '20px', left: '20px', 
           background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', 
@@ -139,6 +143,14 @@ const TicTacToe = () => {
         <h1 style={{ color: '#60a5fa', marginBottom: '5px', letterSpacing: '4px', fontSize: '2rem' }}>NEURAL CORE</h1>
         <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Difficulty: Impossible</p>
       </div>
+
+      {showPopup && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#0f172a', border: '2px solid #22c55e', borderRadius: '12px', padding: '16px 20px', textAlign: 'center', boxShadow: '0 0 18px rgba(34, 197, 94, 0.5)' }}>
+            <p style={{ margin: 0, color: '#fbbf24', fontWeight: 'bold', fontSize: '1rem' }}>{popupText}</p>
+          </div>
+        </div>
+      )}
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 110px)', gap: '15px', padding: '20px', background: 'rgba(30, 41, 59, 0.3)', borderRadius: '24px', border: '1px solid #1e293b' }}>
         {board.map((square, i) => (

@@ -90,7 +90,7 @@ const MemoryMatch = () => {
         onMouseEnter={(e) => e.target.style.background = '#1e293b'}
         onMouseLeave={(e) => e.target.style.background = 'rgba(30, 41, 59, 0.5)'}
       >
-        <LayoutDashboard size={18} /> Exit Game
+        <LayoutDashboard size={18} /> Exit
       </button>
 
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>

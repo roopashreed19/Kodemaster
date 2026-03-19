@@ -1,28 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, RotateCcw, Delete, CornerDownLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LayoutDashboard, RotateCcw, Delete } from 'lucide-react';
+import { motion } from 'framer-motion';
 import api from '../../utils/api';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
-// You can expand this list or fetch it from an API later
-const WORDS = ['REACT', 'NODEJS', 'QUERY', 'LOGIC', 'CLOUD', 'DEBUG', 'ARRAY', 'INDEX', 'PROXY', 'CACHE'];
+const WORDS = [
+  'REACT', 'QUERY', 'LOGIC', 'CLOUD', 'DEBUG', 'ARRAY', 'INDEX', 'PROXY', 'CACHE', 'STACK',
+  'NODES', 'BLOCK', 'CYBER', 'DRIVE', 'EMAIL', 'FRAME', 'GHOST', 'GRAPH', 'INPUT', 'LEVEL',
+  'LOGIN', 'PATCH', 'PHONE', 'QUEUE', 'SHELL', 'SHIFT', 'TABLE', 'TOKEN', 'TOUCH', 'WRITE',
+  'BINARY', 'BUFFER', 'CHIPS', 'CLICK', 'CODES', 'ERROR', 'FILES', 'FORGE', 'LINKS', 'MEDIA',
+  'MOUSE', 'PIXEL', 'PORTS', 'ROBOT', 'SERVE', 'TRACK', 'VOICE', 'WIRES', 'ADMIN', 'BUILD',
+  'CORES', 'CRASH', 'FLASK', 'IMAGE', 'MOUNT', 'PINGS', 'SITES', 'SNAKE', 'TOOLS', 'USAGE'
+];
+const KEYS = [
+  ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+  ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
+  ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE']
+];
 
 const Wordle = () => {
   const [solution] = useState(() => WORDS[Math.floor(Math.random() * WORDS.length)]);
   const [guesses, setGuesses] = useState(Array(MAX_GUESSES).fill(''));
   const [currentGuess, setCurrentGuess] = useState('');
   const [currentRow, setCurrentRow] = useState(0);
-  const [gameState, setGameState] = useState('playing'); // 'playing', 'won', 'lost'
+  const [gameState, setGameState] = useState('playing');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
   const navigate = useNavigate();
 
-  const handleKeyUp = (e) => {
+  const handleInput = (key) => {
     if (gameState !== 'playing') return;
 
-    if (e.key === 'Enter') {
+    if (key === 'ENTER') {
       if (currentGuess.length !== WORD_LENGTH) return;
-      
       const newGuesses = [...guesses];
       newGuesses[currentRow] = currentGuess.toUpperCase();
       setGuesses(newGuesses);
@@ -36,90 +48,140 @@ const Wordle = () => {
         setCurrentRow(prev => prev + 1);
         setCurrentGuess('');
       }
-    }
-
-    if (e.key === 'Backspace') {
+    } else if (key === 'BACKSPACE' || key === 'Backspace') {
       setCurrentGuess(prev => prev.slice(0, -1));
-      return;
-    }
-
-    if (/^[A-Za-z]$/.test(e.key) && currentGuess.length < WORD_LENGTH) {
-      setCurrentGuess(prev => prev + e.key.toUpperCase());
+    } else if (/^[A-Za-z]$/.test(key) && currentGuess.length < WORD_LENGTH) {
+      setCurrentGuess(prev => prev + key.toUpperCase());
     }
   };
 
   useEffect(() => {
-    window.addEventListener('keyup', handleKeyUp);
-    return () => window.removeEventListener('keyup', handleKeyUp);
+    const onKeyUp = (e) => handleInput(e.key.toUpperCase());
+    window.addEventListener('keyup', onKeyUp);
+    return () => window.removeEventListener('keyup', onKeyUp);
   }, [currentGuess, gameState]);
 
   const handleWin = async () => {
     try {
-      await api.post('/user/add-xp', { 
-        xp: 40,
-        coins: 30,
-        subject: 'Arcade', 
-        topicId: 'wordle_master',
-        status: 'success' 
-      });
-      alert("Word Master! +40 XP +30 COINS added.");
-    } catch (err) {
-      console.error("XP update failed", err);
+      await api.post('/user/add-xp', { xp: 40, coins: 30, subject: 'Arcade', topicId: 'wordle_master', status: 'success' });
+      setPopupText("Word Master! +40 XP +30 COINS added.");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2200);
+    } catch (err) { console.error("XP update failed", err); }
+  };
+
+  // Logic to determine colors for Grid and Keyboard
+  const getStatus = (letter, index, rowIdx) => {
+    const upperLetter = letter.toUpperCase();
+    if (rowIdx >= currentRow && gameState === 'playing') return 'default';
+    if (solution[index] === upperLetter) return 'correct';
+    if (solution.includes(upperLetter)) return 'present';
+    return 'absent';
+  };
+
+  const getStyle = (status) => {
+    switch (status) {
+      case 'correct': return { background: '#538d4e', border: 'none' }; // Green
+      case 'present': return { background: '#b59f3b', border: 'none' }; // Yellow
+      case 'absent': return { background: '#3a3a3c', border: 'none' };  // Dark Gray
+      default: return { border: '2px solid #3a3a3c', background: 'transparent' };
     }
   };
 
-  const getLetterStyle = (letter, index, rowIdx) => {
-    if (rowIdx >= currentRow) return { border: '2px solid #334155', background: 'transparent' };
-    
-    if (solution[index] === letter) return { background: '#22c55e', border: 'none' }; // Green
-    if (solution.includes(letter)) return { background: '#eab308', border: 'none' }; // Yellow
-    return { background: '#334155', border: 'none' }; // Gray
+  const getKeyState = (key) => {
+    let state = 'default';
+    guesses.forEach((guess, rowIdx) => {
+      if (rowIdx >= currentRow) return;
+      guess.split('').forEach((letter, i) => {
+        if (letter !== key) return;
+        if (solution[i] === key) state = 'correct';
+        else if (solution.includes(key) && state !== 'correct') state = 'present';
+        else if (state === 'default') state = 'absent';
+      });
+    });
+    return state;
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' }}>
-      
-      <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <LayoutDashboard size={18} /> Back to Arcade
-      </button>
+    <div style={{ minHeight: '100vh', background: '#121213', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
+      <header style={{ width: '100%', borderBottom: '1px solid #3a3a3c', paddingBottom: '10px', marginBottom: '30px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
+        <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', left: '20px', top: '10px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <LayoutDashboard size={18} /> Exit
+        </button>
+        <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>CODEQUEST</h1>
+      </header>
 
-      <h1 style={{ color: '#60a5fa', letterSpacing: '5px', marginBottom: '30px' }}>WORDLE.CORE</h1>
+      {showPopup && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#0f172a', border: '2px solid #22c55e', borderRadius: '12px', padding: '16px 22px', textAlign: 'center', boxShadow: '0 0 18px rgba(34, 197, 94, 0.5)' }}>
+            <p style={{ margin: 0, color: '#fbbf24', fontWeight: 'bold', fontSize: '1rem' }}>{popupText}</p>
+          </div>
+        </div>
+      )}
 
-      <div style={{ display: 'grid', gridTemplateRows: `repeat(${MAX_GUESSES}, 1fr)`, gap: '10px' }}>
-        {guesses.map((guess, i) => {
-          const isCurrent = i === currentRow;
-          const displayWord = isCurrent ? currentGuess.padEnd(WORD_LENGTH, ' ') : guess.padEnd(WORD_LENGTH, ' ');
-
-          return (
-            <div key={i} style={{ display: 'flex', gap: '10px' }}>
-              {displayWord.split('').map((letter, j) => (
+      {/* --- GRID --- */}
+      <div style={{ display: 'grid', gridTemplateRows: `repeat(${MAX_GUESSES}, 1fr)`, gap: '5px', marginBottom: '40px' }}>
+        {guesses.map((guess, i) => (
+          <div key={i} style={{ display: 'flex', gap: '5px' }}>
+            {Array.from({ length: WORD_LENGTH }).map((_, j) => {
+              const letter = i === currentRow ? currentGuess[j] : guess[j];
+              const status = getStatus(letter || '', j, i);
+              return (
                 <motion.div
                   key={j}
-                  initial={false}
-                  animate={letter !== ' ' ? { scale: [1, 1.1, 1] } : {}}
+                  animate={letter ? { scale: [1, 1.1, 1] } : {}}
                   style={{
                     width: '60px', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '1.8rem', fontWeight: 'bold', borderRadius: '8px', textTransform: 'uppercase',
-                    ...getLetterStyle(letter.trim(), j, i)
+                    fontSize: '2rem', fontWeight: 'bold', border: '2px solid #3a3a3c', textTransform: 'uppercase',
+                    ...getStyle(status)
                   }}
                 >
                   {letter}
                 </motion.div>
-              ))}
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        ))}
       </div>
 
-      <div style={{ marginTop: '40px', textAlign: 'center' }}>
-        {gameState === 'won' && <h2 style={{ color: '#22c55e' }}>ACCESS GRANTED</h2>}
-        {gameState === 'lost' && <h2 style={{ color: '#f87171' }}>LOCKOUT: {solution}</h2>}
-        {gameState !== 'playing' && (
-          <button onClick={() => window.location.reload()} style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa', background: 'none', border: 'none', cursor: 'pointer' }}>
-            <RotateCcw size={20} /> RETRY SEQUENCE
-          </button>
-        )}
+      {/* --- VIRTUAL KEYBOARD --- */}
+      <div style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {KEYS.map((row, i) => (
+          <div key={i} style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
+            {row.map((key) => {
+              const state = getKeyState(key);
+              const isSpecial = key === 'ENTER' || key === 'BACKSPACE';
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleInput(key)}
+                  style={{
+                    height: '58px',
+                    padding: isSpecial ? '0 15px' : '0',
+                    minWidth: isSpecial ? '65px' : '40px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    fontSize: isSpecial ? '12px' : '14px',
+                    background: state === 'default' ? '#818384' : getStyle(state).background,
+                    color: '#fff'
+                  }}
+                >
+                  {key === 'BACKSPACE' ? <Delete size={20} /> : key}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
+
+      {gameState !== 'playing' && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: '20px', textAlign: 'center' }}>
+          <h2 style={{ color: gameState === 'won' ? '#538d4e' : '#f87171' }}>{gameState === 'won' ? 'PERFECT' : `SOLUTION: ${solution}`}</h2>
+          <button onClick={() => window.location.reload()} style={{ background: '#538d4e', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '5px', marginTop: '10px', cursor: 'pointer' }}>PLAY AGAIN</button>
+        </motion.div>
+      )}
     </div>
   );
 };

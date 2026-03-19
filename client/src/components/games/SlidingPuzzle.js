@@ -8,6 +8,8 @@ const SlidingPuzzle = () => {
   const [nodes, setNodes] = useState([]);
   const [moves, setMoves] = useState(0);
   const [isWon, setIsWon] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
   const navigate = useNavigate();
 
   // Initialize a solvable 3x3 puzzle
@@ -65,7 +67,9 @@ const SlidingPuzzle = () => {
         topicId: 'sliding_puzzle',
         status: 'success' 
       });
-      alert("Puzzle Deciphered! +35 XP +25 COINS.");
+      setPopupText("Puzzle Deciphered! +35 XP +25 COINS.");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2200);
     } catch (e) { console.error(e); }
   };
 
@@ -77,6 +81,14 @@ const SlidingPuzzle = () => {
       <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
         <LayoutDashboard size={18} /> Exit
       </button>
+
+      {showPopup && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#0f172a', border: '2px solid #22c55e', borderRadius: '12px', padding: '16px 20px', textAlign: 'center', boxShadow: '0 0 18px rgba(34, 197, 94, 0.5)' }}>
+            <p style={{ margin: 0, color: '#fbbf24', fontWeight: 'bold', fontSize: '1rem' }}>{popupText}</p>
+          </div>
+        </div>
+      )}
 
       <h1 style={{ color: '#fbbf24', letterSpacing: '4px', marginBottom: '10px' }}>LOGIC SLIDE</h1>
       <p style={{ color: '#64748b', marginBottom: '30px' }}>Moves: {moves}</p>
