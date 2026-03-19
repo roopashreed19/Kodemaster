@@ -116,9 +116,14 @@ const DBMSQuest = () => {
     return (
         <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
 
-            <button onClick={() => navigate('/world/dbms')} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '30px' }}>
-                <LayoutDashboard size={18} /> Return to Kingdom Map
-            </button>
+            <div className="sticky-nav">
+                <button onClick={() => navigate('/world/dbms')} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LayoutDashboard size={18} /> Return to Kingdom Map
+                </button>
+                <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LayoutDashboard size={18} /> Return to Dashboard
+                </button>
+            </div>
 
             <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                 <AnimatePresence mode="wait">

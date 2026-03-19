@@ -84,7 +84,7 @@ const CNArenaQuest = () => {
     <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
       
      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div className="sticky-nav">
         <button onClick={() => navigate('/world/cn')} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LayoutDashboard size={18} /> Return to Network Map
         </button>

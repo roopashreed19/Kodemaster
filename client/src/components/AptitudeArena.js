@@ -82,7 +82,7 @@ const AptitudeArena = () => {
     <div className="aptitude-container" style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
 
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div className="sticky-nav">
         <button className="back-btn" onClick={() => navigate('/world/aptitude')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LayoutDashboard size={20} /> Back to Aptitude Arena
         </button>

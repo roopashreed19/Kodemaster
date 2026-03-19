@@ -45,7 +45,7 @@ const AptitudeWorld = () => {
       }} />
 
       {/* Navigation - Left Aligned */}
-      <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-start', marginBottom: '20px' }}>
+      <div className="sticky-nav">
         <button
           onClick={() => navigate('/dashboard')}
           style={{

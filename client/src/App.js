@@ -11,12 +11,18 @@ import CNArenaQuest from './components/CNArenaQuest';
 import CNArenaWorld from './components/CNArenaWorld';
 import OOPSArenaWorld from './components/OOPSArenaWorld';
 import OOPSArenaQuest from './components/OOPSArenaQuest';
+import ScrollToTop from './components/ScrollToTop';
+import LandingPage from './components/LandingPage';
+import DBMSWorld from './components/DBMSWorld';
+import DBMSQuest from './components/DBMSQuest';
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
-        <Route path="/" element={<Auth />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/world/dsa" element={<DSADungeon />} />
         <Route path="/arena/:subject/:floorId/:questionId" element={<BattleArena />} />
@@ -26,6 +32,8 @@ function App() {
         <Route path="/world/cn/:topicId" element={<CNArenaQuest />} />
         <Route path="/world/oops" element={<OOPSArenaWorld />} />
         <Route path="/world/oops/:topicId" element={<OOPSArenaQuest />} />
+        <Route path="/world/dbms" element={<DBMSWorld />} />
+        <Route path="/world/dbms/:topicId" element={<DBMSQuest />} />
       </Routes>
     </Router>
   );

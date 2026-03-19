@@ -67,14 +67,16 @@ const DSADungeon = () => {
   };
 
   return (
-    <div className="dungeon-container">
+    <div className="dungeon-container" style={{ paddingTop: 0 }}>
       {/* BACK TO DASHBOARD BUTTON */}
-      <button 
-        onClick={() => navigate('/dashboard')} 
-        style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}
-      >
-        <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
-      </button>
+      <div className="sticky-nav" style={{ marginBottom: '60px' }}>
+        <button 
+          onClick={() => navigate('/dashboard')} 
+          style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
+        </button>
+      </div>
 
       <header className="dungeon-header">
         <h1>FLOOR SELECTOR</h1>

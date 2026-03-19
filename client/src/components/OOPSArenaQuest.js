@@ -78,7 +78,7 @@ const OOPSArenaQuest = () => {
   return (
     <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+      <div className="sticky-nav">
         <button onClick={() => navigate('/world/oops')} style={{ background: 'none', border: 'none', color: '#c084fc', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <LayoutDashboard size={18} /> Return to Oasis
         </button>

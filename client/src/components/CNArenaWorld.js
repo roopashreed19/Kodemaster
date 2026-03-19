@@ -32,12 +32,14 @@ const CNArenaWorld = () => {
       
       <header style={{ maxWidth: '1200px', margin: '0 auto 60px' }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <button 
-            onClick={() => navigate('/dashboard')} 
-            style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}
-          >
-            <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
-          </button>
+          <div className="sticky-nav">
+            <button 
+              onClick={() => navigate('/dashboard')} 
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            >
+              <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
+            </button>
+          </div>
           <h1 style={{ fontSize: '3.5rem', display: 'flex', alignItems: 'center', gap: '20px', color: '#818cf8' }}>
             <Network size={50} /> CN ARENA MAP
           </h1>
