@@ -13,7 +13,12 @@ const UserSchema = new mongoose.Schema({
     name: String, 
     earnedAt: { type: Date, default: Date.now } 
   }],
-  completedQuests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Quest' }]
+  completedQuests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Quest' }],
+  completedFloors: [{ type: String }],
+  xpHistory: [{
+    xp: Number,
+    date: { type: Date, default: Date.now }
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);

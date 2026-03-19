@@ -1,44 +1,31 @@
 const express = require('express');
 const router = express.Router();
-const Challenge = require('../models/challenges'); 
-const OSQuest = require('../models/OSQuest');    
+const Challenge = require('../models/challenges');
 
-router.get('/:subject', async (req, res) => {
+
+router.get('/:subject/:floorId', async (req, res) => {
     try {
-        const { subject } = req.params;
-        let quests;
-
-        if (subject === 'os') {
-            quests = await OSQuest.find().lean();
-        } else {
-            quests = await Challenge.find({ subject: subject }).lean();
-        }
-
-        if (!quests || quests.length === 0) {
-            return res.status(404).json({ message: "No data found for this subject." });
-        }
-
-        res.json(quests);
+        const { subject, floorId } = req.params;
+        const questions = await Challenge.find({ subject, floorId }); 
+        console.log(`Searching for: ${subject}, ${floorId}`); 
+        console.log(`Found: ${questions.length} questions`); 
+        res.json(questions);
     } catch (err) {
-        res.status(500).json({ error: "Internal System Failure", details: err.message });
+        res.status(500).json({ error: "Server Error" });
     }
 });
 
-router.get('/:subject/:floorId/:id', async (req, res) => {
+
+router.get('/:subject/:floorId/:questionId', async (req, res) => {
     try {
-        const { subject, floorId, id } = req.params;
-        let challenge;
-
-        if (subject === 'os') {
-            challenge = await OSQuest.findOne({ floorId, id }).lean();
-        } else {
-            challenge = await Challenge.findOne({ subject, floorId, id }).lean();
-        }
-
-        if (!challenge) return res.status(404).json({ message: "Challenge not found." });
-        res.json(challenge);
+        const quest = await Challenge.findOne({ 
+            subject: req.params.subject, 
+            floorId: req.params.floorId,
+            id: req.params.questionId
+        });
+        res.json(quest);
     } catch (err) {
-        res.status(500).json({ error: "Database Access Error" });
+        res.status(500).json({ error: "Failed to fetch quest" });
     }
 });
 
