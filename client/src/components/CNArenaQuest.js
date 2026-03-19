@@ -50,8 +50,10 @@ const CNArenaQuest = () => {
   const saveXP = useCallback(async (finalScore) => {
     try {
       const xpPoints = finalScore * 20; 
+      const coinReward = finalScore * 10;
       await api.post('/user/add-xp', { 
         xp: xpPoints,
+        coins: coinReward,
         topicId: topicId,
         subject: 'CN',
         status: finalScore > 0 ? 'success' : 'failed',
@@ -59,7 +61,7 @@ const CNArenaQuest = () => {
         type: 'CN_QUEST'
       });
     } catch (err) {
-      console.error("Packet Loss: Failed to sync XP", err);
+      console.error("Packet Loss: Failed to sync rewards", err);
     }
   }, [topicId]);
 
@@ -233,8 +235,13 @@ const CNArenaQuest = () => {
               <h1 style={{ fontSize: '3rem', marginBottom: '10px' }}>MISSION SUCCESS</h1>
               <p style={{ fontSize: '1.4rem', color: '#94a3b8' }}>Integration Complete. Accuracy: {Math.round((score/data.questions.length)*100)}%</p>
               
-              <div style={{ margin: '40px 0', fontSize: '2rem', fontWeight: 'bold', color: '#22c55e' }}>
-                +{score * 20} XP UPLOADED
+              <div style={{ margin: '40px 0', display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#22c55e' }}>
+                  +{score * 20} XP UPLOADED
+                </div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  +{score * 10} COINS EARNED <Network size={24} color="#fbbf24" strokeWidth={3} />
+                </div>
               </div>
 
               <button onClick={() => navigate('/world/cn')} style={{ width: '100%', padding: '18px', background: '#334155', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' }}>

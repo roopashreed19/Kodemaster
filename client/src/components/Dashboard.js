@@ -19,6 +19,7 @@ import {
   Code2
 } from 'lucide-react';
 import ContestTimer from './ContestTimer';
+import DailyCheckIn from './DailyCheckIn';
 import api from '../utils/api';
 
 const subjects = [
@@ -35,6 +36,7 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
+  const [showCheckIn, setShowCheckIn] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -45,6 +47,20 @@ const Dashboard = () => {
         ]);
         setUserData(userRes.data);
         setLeaderboard(leaderRes.data);
+
+        // Check if eligible for check-in
+        const lastCheckIn = userRes.data.user?.lastCheckIn;
+        const now = new Date();
+        const lastDate = lastCheckIn ? new Date(lastCheckIn) : null;
+        
+        const isAlreadyCheckedIn = lastDate && 
+          lastDate.getDate() === now.getDate() && 
+          lastDate.getMonth() === now.getMonth() && 
+          lastDate.getFullYear() === now.getFullYear();
+
+        if (!isAlreadyCheckedIn) {
+          setShowCheckIn(true);
+        }
       } catch (err) {
         console.error("Failed to sync with the Neural Network", err);
       }
@@ -52,6 +68,19 @@ const Dashboard = () => {
 
     fetchDashboardData();
   }, []);
+
+  const handleCheckInReward = (data) => {
+    setUserData(prev => ({
+      ...prev,
+      user: {
+        ...prev.user,
+        coins: data.coins,
+        checkInStreak: data.streak,
+        lastCheckIn: new Date().toISOString()
+      }
+    }));
+  };
+
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -297,6 +326,13 @@ const Dashboard = () => {
           </div>
         )}
       </AnimatePresence>
+
+      <DailyCheckIn 
+        isOpen={showCheckIn} 
+        onClose={() => setShowCheckIn(false)} 
+        onRewardClaimed={handleCheckInReward}
+        userData={userData?.user}
+      />
     </>
   );
 };

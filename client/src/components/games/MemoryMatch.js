@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Database, Cpu, Globe, Zap, Code2, Monitor, Shield, Box, Trophy, LayoutDashboard } from 'lucide-react'; // Added LayoutDashboard
+import { Database, Cpu, Globe, Zap, Code2, Monitor, Shield, Box, Trophy, LayoutDashboard, Coins } from 'lucide-react'; // Added LayoutDashboard
 import api from '../../utils/api';
 
 const icons = [
@@ -61,15 +61,15 @@ const MemoryMatch = () => {
     try {
       await api.post('/user/add-xp', { 
         xp: 30, 
+        coins: 50,
         subject: 'Arcade', 
         topicId: 'memory-sync',
         status: 'success',
         score: 100 // Full score for completion
       });
-      alert("🏆 Sync Successful! +30 XP");
       navigate('/arcade'); 
     } catch (err) {
-      console.error("XP sync failed, returning to arcade anyway.", err);
+      console.error("Reward sync failed, returning to arcade anyway.", err);
       navigate('/arcade');
     }
   };
@@ -149,8 +149,15 @@ const MemoryMatch = () => {
               <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>SYSTEM STABLE</h2>
               <p style={{ color: '#94a3b8', marginBottom: '30px' }}>Memory nodes successfully synced. Rewards authorized.</p>
               
-              <div style={{ padding: '15px', background: '#0f172a', borderRadius: '12px', marginBottom: '30px' }}>
-                <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '1.2rem' }}>+30 XP EARNED</span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '30px' }}>
+                <div style={{ padding: '15px', background: '#0f172a', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)' }}>
+                  <span style={{ color: '#3b82f6', fontWeight: 'bold', fontSize: '1.2rem' }}>+{30} XP EARNED</span>
+                </div>
+                <div style={{ padding: '15px', background: '#0f172a', borderRadius: '12px', border: '1px solid #fbbf24' }}>
+                  <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    +{50} COINS EARNED <Coins size={20} fill="#fbbf24" stroke="none" />
+                  </span>
+                </div>
               </div>
 
               <button 
