@@ -114,7 +114,13 @@ const Pacman = () => {
 
   const handleXP = async () => {
     try {
-      await api.post('/user/add-xp', { xp: 60, subject: 'Arcade', topicId: 'pacman_core' });
+      await api.post('/user/add-xp', { 
+        xp: 60,
+        coins: 40,
+        subject: 'Arcade', 
+        topicId: 'pacman_core',
+        status: 'success'
+      });
     } catch (e) { console.error(e); }
   };
 

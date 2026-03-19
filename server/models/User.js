@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   level: { type: Number, default: 1 },
   coins: { type: Number, default: 0 },
   streak: { type: Number, default: 0 },
+  checkInStreak: { type: Number, default: 0 },
+  lastCheckIn: { type: Date },
   lastActive: { type: Date, default: Date.now },
   badges: [{ 
     name: String, 

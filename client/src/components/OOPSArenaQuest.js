@@ -45,8 +45,10 @@ const OOPSArenaQuest = () => {
   const saveXP = useCallback(async (finalScore) => {
     try {
       const xpPoints = finalScore * 20;
+      const coinReward = finalScore * 10;
       await api.post('/user/add-xp', {
         xp: xpPoints,
+        coins: coinReward,
         topicId: topicId,
         subject: 'OOPS',
         status: finalScore > 0 ? 'success' : 'failed',
@@ -54,7 +56,7 @@ const OOPSArenaQuest = () => {
         type: 'OOPS_QUEST'
       });
     } catch (err) {
-      console.error("Failed to sync XP", err);
+      console.error("Failed to sync rewards", err);
     }
   }, [topicId]);
 
@@ -227,8 +229,13 @@ const OOPSArenaQuest = () => {
               <h1 style={{ fontSize: '3rem', marginBottom: '10px' }}>BUILD SUCCESSFUL</h1>
               <p style={{ fontSize: '1.4rem', color: '#d8b4fe' }}>Class instantiation complete. Accuracy: {Math.round((score / data.questions.length) * 100)}%</p>
 
-              <div style={{ margin: '40px 0', fontSize: '2rem', fontWeight: 'bold', color: '#22c55e' }}>
-                +{score * 20} XP ALLOCATED
+              <div style={{ margin: '40px 0', display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#22c55e' }}>
+                  +{score * 20} XP ALLOCATED
+                </div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 'bold', color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  +{score * 10} COINS EARNED <Box size={24} fill="#fbbf24" stroke="none" />
+                </div>
               </div>
 
               <button onClick={() => navigate('/world/oops')} style={{ width: '100%', padding: '18px', background: '#4c1d95', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' }}>
