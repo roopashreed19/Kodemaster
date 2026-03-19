@@ -15,6 +15,9 @@ import ScrollToTop from './components/ScrollToTop';
 import LandingPage from './components/LandingPage';
 import DBMSWorld from './components/DBMSWorld';
 import DBMSQuest from './components/DBMSQuest';
+import Arcade from './components/Arcade';
+import MemoryMatch from './components/games/MemoryMatch';
+import TicTacToe from './components/games/TicTacToe';
 
 function App() {
   return (
@@ -34,6 +37,9 @@ function App() {
         <Route path="/world/oops/:topicId" element={<OOPSArenaQuest />} />
         <Route path="/world/dbms" element={<DBMSWorld />} />
         <Route path="/world/dbms/:topicId" element={<DBMSQuest />} />
+        <Route path="/arcade" element={<Arcade />} />
+        <Route path="/games/memory" element={<MemoryMatch />} />
+        <Route path="/games/tictactoe" element={<TicTacToe />} />
       </Routes>
     </Router>
   );

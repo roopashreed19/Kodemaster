@@ -6,7 +6,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
 // 1. Initialize App
 const app = express();
 
@@ -26,8 +25,8 @@ console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/gamify_platform";
 
 mongoose.connect(dbURI)
-  .then(() => console.log("🔥 Database Connected: Ready for Quests!"))
-  .catch(err => console.error("❌ DB Connection Error:", err.message));
+  .then(() => console.log("Database Connected: Ready for Quests!"))
+  .catch(err => console.error("DB Connection Error:", err.message));
 
 // 5. Routes
 app.use('/api/auth', require('./routes/auth'));
@@ -40,4 +39,4 @@ app.use('/api/oops', require('./routes/oops'));
 app.use('/api/dbms', require('./routes/dbms'));
 // 6. Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import api from '../utils/api';
+import { handleQuestVictory } from '../utils/questHelper';
 
 const DBMSQuest = () => {
     const { topicId } = useParams();

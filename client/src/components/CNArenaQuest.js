@@ -14,6 +14,7 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import api from '../utils/api';
+import { handleQuestVictory } from '../utils/questHelper';
 
 const CNArenaQuest = () => {
   const { topicId } = useParams();

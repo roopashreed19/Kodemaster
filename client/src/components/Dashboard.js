@@ -15,31 +15,17 @@ import {
   User as UserIcon,
   X,
   LogOut,
-  Clock
+  Clock,
+  Code2
 } from 'lucide-react';
 import ContestTimer from './ContestTimer';
 import api from '../utils/api';
 
-
 const subjects = [
   { id: 'dsa', name: 'DSA Dungeon', icon: <BookOpen size={40} />, color: '#f87171', lore: 'Master the ancient art of Algorithms.' },
-  {
-    id: 'dbms',
-    name: 'DBMS Kingdom',
-    icon: <Database size={40} />,
-    color: '#60a5fa',
-    lore: 'Conquer the Relational schemas.',
-    path: '/world/dbms'
-  },
+  { id: 'dbms', name: 'DBMS Kingdom', icon: <Database size={40} />, color: '#60a5fa', lore: 'Conquer the Relational schemas.' },
   { id: 'oops', name: 'OOPs Oasis', icon: <Box size={40} />, color: '#c084fc', lore: 'Master the principles of Object-Oriented Design.' },
-  {
-    id: 'cn',
-    name: 'CN Arena',
-    icon: <Network size={32} />,
-    color: '#2dd4bf',
-    lore: 'Route your way through the layers of the web.', // Updated lore
-    path: '/world/cn'
-  },
+  { id: 'cn', name: 'CN Arena', icon: <Network size={32} />, color: '#2dd4bf', lore: 'Route your way through the layers of the web.' },
   { id: 'os', name: 'OS Outpost', icon: <Cpu size={40} />, color: '#4ade80', lore: 'Navigate the threads of scheduling.' },
   { id: 'aptitude', name: 'Aptitude Arena', icon: <Globe size={40} />, color: '#fbbf24', lore: 'Sharpen your logic for the final battle.' },
 ];
@@ -61,8 +47,6 @@ const Dashboard = () => {
         setLeaderboard(leaderRes.data);
       } catch (err) {
         console.error("Failed to sync with the Neural Network", err);
-      } finally {
-        // Data sync complete
       }
     };
 
@@ -106,10 +90,41 @@ const Dashboard = () => {
           <div className="layout-grid">
             {/* Main Content */}
             <section className="main-content">
+              
+              {/* 🎮 ARCADE / REST ZONE BANNER */}
+              <motion.div 
+                onClick={() => navigate('/arcade')}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                style={{ 
+                  background: 'linear-gradient(90deg, #1e1b4b, #312e81)', 
+                  padding: '20px 30px', 
+                  borderRadius: '16px', 
+                  marginBottom: '40px',
+                  cursor: 'pointer',
+                  border: '1px solid #4338ca',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  boxShadow: '0 10px 30px -10px rgba(67, 56, 202, 0.5)'
+                }}
+              >
+                <div>
+                  <h3 style={{ color: '#fff', margin: 0, fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span>🎮</span> Enter the Rest Zone
+                  </h3>
+                  <p style={{ color: '#a5b4fc', margin: '5px 0 0 0', fontSize: '0.9rem' }}>
+                    Bored of coding? Play mini-games and earn bonus coins!
+                  </p>
+                </div>
+                <Trophy color="#fbbf24" size={28} />
+              </motion.div>
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="hero-text"
+                style={{ textAlign: 'center', marginBottom: '40px' }}
               >
                 <h1><Flame className="inline-icon" /> CHOOSE YOUR REALM</h1>
                 <p>The journey to mastery begins with a single line of code.</p>
@@ -147,7 +162,6 @@ const Dashboard = () => {
             <aside className="side-panel">
               <ContestTimer />
               <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="panel-card">
-
                 <h3><Trophy size={20} color="#fbbf24" /> Leaderboard</h3>
                 <div className="leader-list">
                   {leaderboard.map((player, index) => (
@@ -182,7 +196,6 @@ const Dashboard = () => {
               exit={{ scale: 0.9, opacity: 0, y: 30 }}
               style={{ background: '#0f172a', border: '1px solid #1e40af', borderRadius: '32px', width: '100%', maxWidth: '600px', overflow: 'hidden', boxShadow: '0 0 50px rgba(37, 99, 235, 0.2)', margin: '40px auto' }}
             >
-              {/* Profile Header */}
               <div style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #172554 100%)', padding: '40px', position: 'relative' }}>
                 <button
                   onClick={() => setShowProfile(false)}
@@ -201,7 +214,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Profile Body */}
               <div style={{ padding: '40px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
                   <div style={{ background: 'rgba(59, 130, 246, 0.1)', padding: '20px', borderRadius: '20px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
@@ -218,7 +230,6 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Next Level Progress */}
                 <div style={{ marginBottom: '35px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', fontSize: '1rem', color: '#f8fafc', fontWeight: 'bold' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -236,8 +247,6 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-
-
                 <h3 style={{ fontSize: '1.2rem', color: '#f8fafc', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <Clock size={20} color="#3b82f6" /> RECENT ACTIVITY
                 </h3>
@@ -248,7 +257,8 @@ const Dashboard = () => {
                         <div style={{ padding: '10px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px', color: '#60a5fa' }}>
                           {sub.subject.toLowerCase() === 'dbms' ? <Database size={18} /> : 
                            sub.subject.toLowerCase() === 'aptitude' ? <Globe size={18} /> :
-                           sub.subject.toLowerCase() === 'oops' ? <Box size={18} /> : <Zap size={18} />}
+                           sub.subject.toLowerCase() === 'oops' ? <Box size={18} /> : 
+                           sub.subject.toLowerCase() === 'cn' ? <Network size={18} /> : <Zap size={18} />}
                         </div>
                         <div style={{ flex: 1 }}>
                           <div style={{ fontWeight: 'bold', fontSize: '1rem', color: '#f8fafc' }}>{sub.questId.replace(/-/g, ' ').toUpperCase()}</div>
