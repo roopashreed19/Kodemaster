@@ -1,21 +1,59 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-// Added LayoutDashboard for the button and BrainCircuit for variety
-import { Gamepad2, Grid3X3, BrainCircuit, LayoutDashboard, Zap } from 'lucide-react'; 
+import { Grid3X3, BrainCircuit, LayoutDashboard, Type, Puzzle, Ghost, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const games = [
-  { id: 'memory', name: 'Memory Sync', icon: <BrainCircuit />, color: '#fbbf24', xp: '30 XP for Win' },
-  { id: 'tictactoe', name: 'Neural Tic-Tac-Toe', icon: <Grid3X3 />, color: '#60a5fa', xp: '20 XP for Win' },
+  { 
+    id: 'memory', 
+    name: 'Memory Sync', 
+    icon: <BrainCircuit />, 
+    color: '#fbbf24', 
+    xp: '30 XP for Win' 
+  },
+  { 
+    id: 'tictactoe', 
+    name: 'Neural Tic-Tac-Toe', 
+    icon: <Grid3X3 />, 
+    color: '#60a5fa', 
+    xp: '50 XP for Win' // Updated to match the "Hard" difficulty reward
+  },
+  { 
+    id: 'wordle', 
+    name: 'Wordle.Core', 
+    icon: <Type />, 
+    color: '#22c55e', // Green for Wordle
+    xp: '40 XP for Win' 
+  },
+  { 
+    id: 'sliding-puzzle', 
+    name: 'Logic Slide', 
+    icon: <Puzzle />, 
+    color: '#fbbf24', 
+    xp: '35 XP for Win' 
+  },
+  { 
+  id: 'pacman', 
+  name: 'Neural Pac-Man', 
+  icon: <Ghost />, 
+  color: '#facc15', 
+  xp: '60 XP for Clear' 
+},
+{ 
+    id: 'wordsearch', // This ID must match the end of your Route path in App.js
+    name: 'Cipher Search', 
+    icon: <Search />, 
+    color: '#22c55e', 
+    xp: '45 XP for Clear' 
+  },
 ];
 
 const Arcade = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617', padding: '60px', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: '#020617', padding: '60px', position: 'relative', fontFamily: 'Inter, sans-serif' }}>
       
-      {/* --- BACK TO DASHBOARD BUTTON --- */}
       <button 
         onClick={() => navigate('/dashboard')} 
         style={{ 
@@ -53,6 +91,7 @@ const Arcade = () => {
               cursor: 'pointer',
               boxShadow: `0 0 20px ${game.color}11`
             }}
+            // Note: Make sure your Route in App.js matches this path structure!
             onClick={() => navigate(`/games/${game.id}`)}
           >
             <div style={{ color: game.color, marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>

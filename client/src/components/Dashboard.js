@@ -15,8 +15,7 @@ import {
   User as UserIcon,
   X,
   LogOut,
-  Clock,
-  Code2
+  Clock
 } from 'lucide-react';
 import ContestTimer from './ContestTimer';
 import DailyCheckIn from './DailyCheckIn';
@@ -97,7 +96,7 @@ const Dashboard = () => {
             <motion.div animate={{ rotate: [0, 10, -10, 0] }} transition={{ repeat: Infinity, duration: 2 }}>
               <Zap className="logo-icon" />
             </motion.div>
-            <h2>KODEMASTER</h2>
+            <h2>CODEQUEST</h2>
           </div>
           <div className="player-stats">
             <div className="stat-item"><Trophy size={18} /> <span>LVL {userData?.user?.level || 1}</span></div>
@@ -188,26 +187,32 @@ const Dashboard = () => {
               </div>
             </section>
 
+            {/* Side Panel: Only Leaderboard */}
             <aside className="side-panel">
-              <ContestTimer />
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="panel-card">
-                <h3><Trophy size={20} color="#fbbf24" /> Leaderboard</h3>
+              <motion.div 
+                initial={{ opacity: 0, x: 20 }} 
+                animate={{ opacity: 1, x: 0 }} 
+                className="panel-card"
+                style={{ height: 'fit-content' }}
+              >
+                <h3 style={{ marginBottom: '20px' }}>
+                  <Trophy size={20} color="#fbbf24" /> Global Rankings
+                </h3>
                 <div className="leader-list">
                   {leaderboard.map((player, index) => (
                     <div key={player._id} className={`leader-item ${player._id === userData?.user?._id ? 'highlight' : ''}`}>
-                      <span>{index + 1}. {player.username}</span>
-                      <span>{player.xp} XP</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ color: index < 3 ? '#fbbf24' : '#94a3b8', fontWeight: 'bold', minWidth: '20px' }}>
+                          {index + 1}.
+                        </span>
+                        <span style={{ fontWeight: player._id === userData?.user?._id ? 'bold' : 'normal' }}>
+                          {player.username}
+                        </span>
+                      </div>
+                      <span style={{ color: '#60a5fa', fontSize: '0.9rem' }}>{player.xp} XP</span>
                     </div>
                   ))}
                   {leaderboard.length === 0 && <div className="feed-item">Scanning rankings...</div>}
-                </div>
-              </motion.div>
-
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="panel-card mt-20">
-                <h3><Zap size={20} color="#38bdf8" /> Live Activity</h3>
-                <div className="activity-feed">
-                  <div className="feed-item">User_42 cleared <b>Binary Search</b></div>
-                  <div className="feed-item">Alice reached <b>Level 5</b></div>
                 </div>
               </motion.div>
             </aside>
@@ -238,7 +243,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h2 style={{ fontSize: '2.2rem', marginBottom: '5px' }}>{userData?.user?.username}</h2>
-                    <p style={{ color: '#93c5fd', fontSize: '1.1rem' }}>User</p>
+                    <p style={{ color: '#93c5fd', fontSize: '1.1rem' }}>Player Profile</p>
                   </div>
                 </div>
               </div>
@@ -282,7 +287,7 @@ const Dashboard = () => {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '180px', overflowY: 'auto', paddingRight: '5px' }}>
                   {userData?.recentSubmissions?.length > 0 ? (
                     userData.recentSubmissions.map((sub, i) => (
-                      <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'center', padding: '15px', background: 'rgba(30, 41, 59, 0.5)', borderRadius: '12px', border: '1px solid #1e293b', animation: 'fadeIn 0.5s ease-out' }}>
+                      <div key={i} style={{ display: 'flex', gap: '15px', alignItems: 'center', padding: '15px', background: 'rgba(30, 41, 59, 0.5)', borderRadius: '12px', border: '1px solid #1e293b' }}>
                         <div style={{ padding: '10px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '10px', color: '#60a5fa' }}>
                           {sub.subject.toLowerCase() === 'dbms' ? <Database size={18} /> : 
                            sub.subject.toLowerCase() === 'aptitude' ? <Globe size={18} /> :
@@ -302,16 +307,7 @@ const Dashboard = () => {
                       </div>
                     ))
                   ) : (
-                    <div style={{ display: 'flex', gap: '15px', alignItems: 'center', padding: '15px', background: 'rgba(30, 41, 59, 0.5)', borderRadius: '12px', border: '1px solid #1e293b' }}>
-                      <div style={{ padding: '10px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '10px', color: '#22c55e' }}>
-                        <BookOpen size={18} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 'bold', fontSize: '1rem' }}>JOURNEY STARTED</div>
-                        <div style={{ color: '#94a3b8', fontSize: '0.8rem' }}>Welcome to Kodemaster!</div>
-                      </div>
-                      <div style={{ color: '#22c55e', fontWeight: 'bold', fontSize: '0.8rem' }}>INITIATED</div>
-                    </div>
+                    <div className="feed-item">No recent activity detected.</div>
                   )}
                 </div>
 

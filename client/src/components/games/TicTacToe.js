@@ -12,9 +12,9 @@ const TicTacToe = () => {
 
   const calculateWinner = (squares) => {
     const lines = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-      [0, 4, 8], [2, 4, 6]             // diagonals
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
     ];
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
@@ -26,27 +26,74 @@ const TicTacToe = () => {
   const winner = calculateWinner(board);
   const isDraw = !winner && board.every(square => square !== null);
 
+  // --- MINIMAX ALGORITHM LOGIC ---
+  const minimax = (tempBoard, depth, isMaximizing) => {
+    const result = calculateWinner(tempBoard);
+    if (result === 'O') return 10 - depth;
+    if (result === 'X') return depth - 10;
+    if (tempBoard.every(s => s !== null)) return 0;
+
+    if (isMaximizing) {
+      let bestScore = -Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (!tempBoard[i]) {
+          tempBoard[i] = 'O';
+          let score = minimax(tempBoard, depth + 1, false);
+          tempBoard[i] = null;
+          bestScore = Math.max(score, bestScore);
+        }
+      }
+      return bestScore;
+    } else {
+      let bestScore = Infinity;
+      for (let i = 0; i < 9; i++) {
+        if (!tempBoard[i]) {
+          tempBoard[i] = 'X';
+          let score = minimax(tempBoard, depth + 1, true);
+          tempBoard[i] = null;
+          bestScore = Math.min(score, bestScore);
+        }
+      }
+      return bestScore;
+    }
+  };
+
+  const findBestMove = (currentBoard) => {
+    let bestScore = -Infinity;
+    let move = -1;
+    for (let i = 0; i < 9; i++) {
+      if (!currentBoard[i]) {
+        currentBoard[i] = 'O';
+        let score = minimax(currentBoard, 0, false);
+        currentBoard[i] = null;
+        if (score > bestScore) {
+          bestScore = score;
+          move = i;
+        }
+      }
+    }
+    return move;
+  };
+
   const handleClick = (i) => {
-    if (winner || board[i]) return;
+    if (winner || board[i] || !isXNext) return;
     const newBoard = board.slice();
     newBoard[i] = 'X';
     setBoard(newBoard);
     setIsXNext(false);
   };
 
-  // Simple AI move for 'O'
   useEffect(() => {
     if (!isXNext && !winner && !isDraw) {
       const timer = setTimeout(() => {
-        const emptyIndices = board.map((val, idx) => (val === null ? idx : null)).filter(val => val !== null);
-        if (emptyIndices.length > 0) {
-          const randomMove = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+        const bestMove = findBestMove([...board]);
+        if (bestMove !== -1) {
           const newBoard = board.slice();
-          newBoard[randomMove] = 'O';
+          newBoard[bestMove] = 'O';
           setBoard(newBoard);
           setIsXNext(true);
         }
-      }, 500);
+      }, 600);
       return () => clearTimeout(timer);
     }
   }, [isXNext, board, winner, isDraw]);
@@ -61,10 +108,11 @@ const TicTacToe = () => {
         xp: 20, 
         coins: 30,
         subject: 'Arcade', 
-        topicId: 'tictactoe',
+        topicId: 'tictactoe_hard',
         status: 'success',
         score: 100
       });
+      alert("Grandmaster Victory! +50 XP authorized.");
       navigate('/arcade');
     } catch (err) {
       console.error('Reward claim failed:', err);
@@ -73,54 +121,56 @@ const TicTacToe = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', position: 'relative' }}>
+    <div style={{ minHeight: '100vh', background: '#020617', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', position: 'relative', fontFamily: 'Inter, sans-serif' }}>
       
-      {/* --- BACK TO DASHBOARD OPTION --- */}
       <button 
         onClick={() => navigate('/dashboard')} 
         style={{ 
           position: 'absolute', top: '20px', left: '20px', 
           background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', 
           color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', 
-          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
-          fontSize: '0.9rem', transition: '0.2s'
+          cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'
         }}
-        onMouseEnter={(e) => e.target.style.background = '#1e293b'}
-        onMouseLeave={(e) => e.target.style.background = 'rgba(30, 41, 59, 0.5)'}
       >
-        <LayoutDashboard size={18} /> Exit Game
+        <LayoutDashboard size={18} /> Exit
       </button>
 
-      <h1 style={{ color: '#60a5fa', marginBottom: '20px', letterSpacing: '2px' }}>NEURAL TIC-TAC-TOE</h1>
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 style={{ color: '#60a5fa', marginBottom: '5px', letterSpacing: '4px', fontSize: '2rem' }}>NEURAL CORE</h1>
+        <p style={{ color: '#64748b', fontSize: '0.9rem' }}>Difficulty: Impossible</p>
+      </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 100px)', gap: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 110px)', gap: '15px', padding: '20px', background: 'rgba(30, 41, 59, 0.3)', borderRadius: '24px', border: '1px solid #1e293b' }}>
         {board.map((square, i) => (
           <div 
             key={i} 
             onClick={() => handleClick(i)} 
             style={{ 
-              width: '100px', height: '100px', background: '#1e293b', 
-              border: '2px solid #334155', borderRadius: '12px', 
+              width: '110px', height: '110px', background: '#0f172a', 
+              border: '2px solid #1e293b', borderRadius: '16px', 
               display: 'flex', alignItems: 'center', justifyContent: 'center', 
-              cursor: 'pointer', transition: '0.2s' 
+              cursor: square || winner ? 'default' : 'pointer', transition: '0.3s all'
             }}
           >
-            {square === 'X' && <X size={48} color="#60a5fa" />}
-            {square === 'O' && <Circle size={48} color="#f87171" />}
+            {square === 'X' && <X size={54} color="#60a5fa" strokeWidth={2.5} />}
+            {square === 'O' && <Circle size={54} color="#f87171" strokeWidth={2.5} />}
           </div>
         ))}
       </div>
 
-      <div style={{ height: '80px', marginTop: '20px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ height: '100px', marginTop: '30px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
         {winner === 'X' && !showVictory && (
-          <button onClick={handleWin} style={{ padding: '12px 24px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 0 20px rgba(34, 197, 94, 0.3)' }}>
-            CLAIM XP
+          <button onClick={handleWin} style={{ padding: '15px 40px', background: '#22c55e', color: '#fff', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1.1rem' }}>
+            CLAIM 50 XP
           </button>
         )}
         
+        {winner === 'O' && <p style={{ color: '#f87171', fontWeight: 'bold' }}>SYSTEM OVERRIDE: YOU LOST</p>}
+        {isDraw && <p style={{ color: '#94a3b8' }}>NEURAL STALEMATE</p>}
+
         {(winner === 'O' || isDraw) && (
-          <button onClick={() => setBoard(Array(9).fill(null))} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.1rem' }}>
-            <RotateCcw size={20} /> RETRY SYSTEM
+          <button onClick={() => {setBoard(Array(9).fill(null)); setIsXNext(true);}} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa', background: 'rgba(96, 165, 250, 0.1)', padding: '10px 20px', borderRadius: '8px', border: '1px solid #60a5fa', cursor: 'pointer' }}>
+            <RotateCcw size={18} /> REBOOT MATCH
           </button>
         )}
       </div>
