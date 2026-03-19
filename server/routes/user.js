@@ -5,10 +5,10 @@ const Challenge = require('../models/challenges');
 const Submission = require('../models/Submission'); 
 const auth = require('../middleware/auth');
 
-// Helper function for Level Calculation
+
 const calculateLevel = (xp) => Math.floor(Math.sqrt(xp / 100)) + 1;
 
-// --- ROUTE 1: ADD XP & HANDLE LEVEL UP ---
+
 router.put('/add-xp', auth, async (req, res) => {
   const { xpToAdd } = req.body;
   try {
@@ -34,16 +34,15 @@ router.put('/add-xp', auth, async (req, res) => {
   }
 });
 
-// --- ROUTE 2: CHECK FLOOR PROGRESS & COMPLETION ---
+
 router.get('/progress/:floorId', auth, async (req, res) => {
   try {
     const { floorId } = req.params;
-    const userId = req.user.id; // Now using authenticated user ID
+    const userId = req.user.id;
 
-    // 1. Get total number of quests existing for this floor
+
     const totalQuests = await Challenge.countDocuments({ floorId });
 
-    // 2. Get unique quests this specific user has passed
     const passedQuests = await Submission.distinct('questId', {
       userId: userId, 
       floorId: floorId,
@@ -52,7 +51,6 @@ router.get('/progress/:floorId', auth, async (req, res) => {
 
     const isAllCleared = passedQuests.length >= totalQuests && totalQuests > 0;
 
-    // Optional: If all cleared, you could automatically update user.completedFloors here
     if (isAllCleared) {
         await User.findByIdAndUpdate(userId, { 
             $addToSet: { completedFloors: floorId } 

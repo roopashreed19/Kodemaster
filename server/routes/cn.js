@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const CNArena = require('../models/CNArena'); // Ensure this model exists
+const CNArena = require('../models/CNArena'); 
 
-// Get all CN topics for the selection screen
+
 router.get('/all', async (req, res) => {
   try {
     const topics = await CNArena.find({}, 'topicId title conceptTitle');
@@ -12,7 +12,7 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// Get a specific CN topic by its ID
+
 router.get('/:topicId', async (req, res) => {
   try {
     const topic = await CNArena.findOne({ topicId: req.params.topicId });

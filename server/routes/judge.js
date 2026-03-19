@@ -16,7 +16,6 @@ router.post('/run', async (req, res) => {
     let command = '';
     let compileCommand = '';
 
-    // 1. Wrap code based on language to inject test cases automatically
     let wrappedCode = code;
 
     if (language === 'javascript') {
@@ -51,8 +50,6 @@ for i, tc in enumerate(test_cases):
     } else if (language === 'cpp') {
         filePath = path.join(tempDir, `${filename}.cpp`);
         const cppExe = path.join(tempDir, `${filename}.exe`);
-        // Note: For C++/Java, it's easier to have the user handle I/O or use a more complex header.
-        // For now, we'll keep the standard compilation.
         compileCommand = `g++ "${filePath}" -o "${cppExe}"`;
         command = `"${cppExe}"`;
     } else if (language === 'java') {
@@ -62,7 +59,7 @@ for i, tc in enumerate(test_cases):
     }
 
     try {
-        // Write the wrapped code to file
+      
         fs.writeFileSync(filePath, wrappedCode);
 
         const execute = (cmd) => {
@@ -73,20 +70,18 @@ for i, tc in enumerate(test_cases):
             });
         };
 
-        // 2. Compilation Step
         if (compileCommand) {
             const compileResult = await execute(compileCommand);
             if (compileResult.error) {
                 cleanup(filePath);
-                return res.json({ 
-                    success: false, 
+                return res.json({
+                    success: false,
                     output: compileResult.stderr || compileResult.error.message,
-                    message: "⚔️ Compilation Error" 
+                    message: "Compilation Error" 
                 });
             }
         }
 
-        // 3. Execution Step
         const runResult = await execute(command);
         cleanup(filePath);
 
@@ -94,14 +89,13 @@ for i, tc in enumerate(test_cases):
             return res.json({ 
                 success: false, 
                 output: runResult.stderr || "Runtime Error", 
-                message: "❌ Defeat" 
+                message: "Defeat" 
             });
         }
 
         const rawOutput = runResult.stdout.trim();
-        // Split outputs by our delimiter to check multiple test cases
         const userResults = rawOutput.split("###");
-        
+
         let allPassed = true;
         let feedback = "";
 
@@ -109,7 +103,7 @@ for i, tc in enumerate(test_cases):
             testCases.forEach((tc, index) => {
                 const expected = tc.expected.toString().trim();
                 const actual = userResults[index] ? userResults[index].trim() : "No Output";
-                
+
                 if (actual !== expected) {
                     allPassed = false;
                     feedback += `TC ${index + 1}: Expected ${expected}, got ${actual}\n`;
@@ -141,5 +135,58 @@ function cleanup(filePath) {
         console.error("Cleanup error", e);
     }
 }
+
+const sqlite3 = require('sqlite3').verbose();
+
+// SQL Judge Route using Local In-Memory DB
+router.post('/run-sql', (req, res) => {
+    const { query, initScript, expectedOutput } = req.body;
+
+    if (!query || !query.trim()) {
+        return res.json({ success: false, output: "Query cannot be empty.", message: "❌ Syntax Error" });
+    }
+
+    const db = new sqlite3.Database(':memory:');
+
+    db.serialize(() => {
+        if (initScript) {
+            db.exec(initScript, (err) => {
+                if (err) {
+                    db.close();
+                    return res.json({ success: false, output: err.message, message: "❌ Schema Init Error" });
+                }
+            });
+        }
+
+        db.all(query, [], (err, rows) => {
+            db.close();
+            if (err) {
+                return res.json({ success: false, output: err.message, message: "❌ Execution Error" });
+            }
+
+            let userOutput = "";
+            if (rows && rows.length > 0) {
+                userOutput = rows.map(row => Object.values(row).join('|')).join('\n');
+            }
+
+            const normalizedUser = userOutput.replace(/\r\n/g, '\n').trim();
+            const normalizedExpected = (expectedOutput || "").replace(/\r\n/g, '\n').trim();
+
+            if (normalizedUser === normalizedExpected) {
+                res.json({
+                    success: true,
+                    output: userOutput,
+                    message: "✅ Valid Query! System logic verified."
+                });
+            } else {
+                res.json({
+                    success: false,
+                    output: `Result:\n${userOutput || "<No Rows>"}\n\nExpected:\n${expectedOutput}`,
+                    message: "❌ Incorrect Result Set"
+                });
+            }
+        });
+    });
+});
 
 module.exports = router;

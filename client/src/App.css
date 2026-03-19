@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 :root {
   --bg-dark: #020617;
   --card-bg: rgba(30, 41, 59, 0.7);
@@ -12,7 +13,7 @@
   position: relative;
 }
 
-/* Floating animated glow in background */
+
 .bg-glow {
   position: absolute;
   top: -10%;
@@ -132,19 +133,17 @@
   transition: width 1s ease;
 }
 
-/* --- Authentication Page Styles --- */
+
 .auth-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  /* Updated to match your new dashboard background */
   background: var(--bg-dark); 
   position: relative;
   overflow: hidden;
 }
 
-/* Reusing the background glow for the login page too! */
 .auth-container::before {
   content: '';
   position: absolute;
@@ -286,7 +285,7 @@
   color: #ef4444;
 }
 
-/* Mobile responsive */
+
 @media (max-width: 1000px) {
   .layout-grid {
     grid-template-columns: 1fr;
@@ -634,7 +633,7 @@
   outline: none;
 }
 
-/* Modal Overlay */
+
 .quest-modal-overlay {
   position: fixed;
   top: 0;
@@ -649,7 +648,7 @@
   z-index: 1000;
 }
 
-/* Modal Box */
+
 .quest-modal {
   background: #1e293b;
   width: 90%;
@@ -682,7 +681,7 @@
 
 .close-btn:hover { color: #f87171; }
 
-/* Quest Cards */
+
 .quest-list {
   display: flex;
   flex-direction: column;
