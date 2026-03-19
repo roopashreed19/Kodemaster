@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Aptitude = require('../models/Aptitude');
 
-// 1. Get all topics (for the selection map)
+
 router.get('/all', async (req, res) => {
   try {
     const topics = await Aptitude.find({}, 'topicId title questions');
@@ -12,7 +12,7 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// 2. Get specific topic by topicId
+
 router.get('/:topicId', async (req, res) => {
   try {
     const topic = await Aptitude.findOne({ topicId: req.params.topicId });

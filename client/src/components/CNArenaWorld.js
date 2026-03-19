@@ -12,7 +12,7 @@ const CNArenaWorld = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       try {
-        // This calls the /api/cn/all route we created in the backend
+       
         const res = await api.get('/cn/all');
         setTopics(res.data);
       } catch (err) {
@@ -29,7 +29,7 @@ const CNArenaWorld = () => {
   return (
     <div className="cn-world-container" style={{ padding: '60px 40px', background: '#020617', minHeight: '100vh', color: '#f8fafc' }}>
       
-      {/* Header Section */}
+      
       <header style={{ maxWidth: '1200px', margin: '0 auto 60px' }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <button 
@@ -47,7 +47,7 @@ const CNArenaWorld = () => {
         </motion.div>
       </header>
 
-      {/* Topics Grid */}
+     
       <div style={{ 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', 
@@ -74,7 +74,7 @@ const CNArenaWorld = () => {
               overflow: 'hidden'
             }}
           >
-            {/* Background Glow */}
+            
             <div style={{ position: 'absolute', top: '-20%', right: '-20%', width: '100px', height: '100px', background: '#6366f1', filter: 'blur(60px)', opacity: 0.1 }}></div>
 
             <div style={{ background: 'rgba(99, 102, 241, 0.1)', width: '50px', height: '50px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#818cf8', marginBottom: '20px' }}>

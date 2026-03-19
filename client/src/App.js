@@ -9,12 +9,14 @@ import './App.css';
 import AptitudeArena from './components/AptitudeArena';
 import CNArenaQuest from './components/CNArenaQuest';
 import CNArenaWorld from './components/CNArenaWorld';
+import LandingPage from './components/LandingPage';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Auth />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth" element={<Auth />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/world/dsa" element={<DSADungeon />} />
         <Route path="/arena/:subject/:floorId/:questionId" element={<BattleArena />} />

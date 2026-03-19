@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const ChallengeSchema = new mongoose.Schema({
-    subject: { type: String, required: true }, // e.g., 'dsa'
-    floorId: { type: String, required: true }, // e.g., 'floor2'
-    floorName: { type: String, required: true }, // e.g., 'String Sanctum'
-    id: { type: String, required: true }, // e.g., 'q1'
+    subject: { type: String, required: true }, 
+    floorId: { type: String, required: true }, 
+    floorName: { type: String, required: true }, 
+    id: { type: String, required: true }, 
     title: { type: String, required: true },
     difficulty: { type: String, enum: ['Easy', 'Medium', 'Hard'], default: 'Easy' },
     xp: { type: Number, default: 50 },

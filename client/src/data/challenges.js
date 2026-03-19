@@ -111,7 +111,5 @@ export const challenges = {
         }
       ]
     }
-    // Floor 2 (String Sanctum) is omitted here because your useEffect 
-    // will now fetch it dynamically from your MongoDB.
   }
 };

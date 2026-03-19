@@ -24,11 +24,11 @@ const DSADungeon = () => {
   const [currentQuests, setCurrentQuests] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // VICTORY STATES
+
   const [showVictory, setShowVictory] = useState(false);
   const [completedFloor, setCompletedFloor] = useState(null);
 
-  // CHECK FLOOR COMPLETION LOGIC
+
   const checkFloorCompletion = async (floorId) => {
     try {
       const response = await api.get(`/user/progress/${floorId}`);
@@ -68,7 +68,7 @@ const DSADungeon = () => {
 
   return (
     <div className="dungeon-container">
-      {/* FLOATING DASHBOARD BUTTON */}
+     
       <button 
         className="back-to-dashboard" 
         onClick={() => navigate('/dashboard')}
@@ -197,7 +197,7 @@ const DSADungeon = () => {
         )}
       </AnimatePresence>
 
-      {/* VICTORY ACHIEVEMENT MODAL */}
+    
       <AnimatePresence>
         {showVictory && completedFloor && (
           <div className="victory-overlay">

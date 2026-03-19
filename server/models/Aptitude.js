@@ -16,5 +16,5 @@ const AptitudeSchema = new mongoose.Schema({
   }]
 });
 
-// Explicitly naming the collection 'aptitudes' to avoid Atlas confusion
+
 module.exports = mongoose.model('Aptitude', AptitudeSchema, 'aptitudes');

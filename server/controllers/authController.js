@@ -55,10 +55,10 @@ exports.login = async (req, res) => {
   }
 };
 
-// Get logged in user data
+
 exports.getMe = async (req, res) => {
   try {
-    const token = req.cookies.token; // Look for the cookie
+    const token = req.cookies.token;
     if (!token) return res.status(401).json({ msg: "No token, authorization denied" });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

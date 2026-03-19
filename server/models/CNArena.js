@@ -15,5 +15,5 @@ const cnSchema = new mongoose.Schema({
   }]
 });
 
-// The third argument 'cn_quests' ensures it looks in the correct collection name
+
 module.exports = mongoose.model('CNArena', cnSchema, 'cn_quests');
