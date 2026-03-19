@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { LayoutGrid, Layers, Zap, ChevronRight, ChevronLeft, ShieldCheck } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const OSOutpost = () => {
   const [floors, setFloors] = useState([]);
@@ -12,7 +12,7 @@ const OSOutpost = () => {
   useEffect(() => {
     const fetchOSData = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/challenges/os');
+        const res = await api.get('/os');
 
         // Group 300 questions into 10 floors
         const grouped = res.data.reduce((acc, q) => {
@@ -20,6 +20,7 @@ const OSOutpost = () => {
             acc[q.floorId] = {
               floorId: q.floorId,
               floorName: q.floorName,
+              floorBrief: q.floorBrief,
               questions: []
             };
           }
@@ -108,18 +109,18 @@ const OSOutpost = () => {
                 {floor.floorName}
               </h3>
 
-              <p style={{ color: '#64748b', fontSize: '1rem' }}>
-                SECTOR_0{index + 1} // KERNEL // PRIVILEGED
+              <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: '500' }}>
+                {floor.floorName} // LEVEL_0{index + 1}
               </p>
             </div>
 
             {/* OOPS style card footer */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '30px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#fbbf24', fontWeight: 'bold' }}>
-                <Zap size={18} /> +30 UNITS
+                <Zap size={18} /> +300 XP
               </div>
               <div style={{ color: '#a78bfa', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                ENTER SECTOR <ChevronRight size={18} />
+                ENTER FLOOR <ChevronRight size={18} />
               </div>
             </div>
           </motion.div>

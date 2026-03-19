@@ -42,7 +42,7 @@ function App() {
         <Route path="/world/os" element={<OSOutpost />} />
         <Route path="/briefing/:subject/:floorId" element={<SectorBriefing />} />
         <Route path="/summary/:subject/:floorId" element={<FloorSummary />} />
-        <Route path="/arena/os/:floorId/:questionId" element={<OSOutpostArena />} />
+        <Route path="/arena/:subject/:floorId/:questionId" element={<OSOutpostArena />} />
 
         <Route path="/world/aptitude" element={<AptitudeWorld />} />
         <Route path="/aptitude-arena/:topicId" element={<AptitudeArena />} />

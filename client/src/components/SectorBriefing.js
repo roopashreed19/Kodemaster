@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, Terminal, ChevronRight, AlertCircle, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const TypewriterText = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
-  
+
   useEffect(() => {
     let i = 0;
-    setDisplayedText(""); 
+    setDisplayedText("");
     const timer = setInterval(() => {
       setDisplayedText((prev) => prev + text.charAt(i));
       i++;
@@ -32,20 +32,22 @@ const SectorBriefing = () => {
     const fetchBriefing = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:5000/api/challenges/${subject}`);
-        
+        setError(false);
+        const endpoint = subject === 'os' ? '/os' : `/${subject}`;
+        const res = await api.get(endpoint);
+
         const currentFloorQuests = res.data.filter(q => q.floorId === floorId);
-        
-        if (currentFloorQuests.length > 0) {
+
+        if (currentFloorQuests && currentFloorQuests.length > 0) {
           const sortedQuests = currentFloorQuests.sort((a, b) => {
-            const numA = parseInt(a.id.replace(/\D/g, ''));
-            const numB = parseInt(b.id.replace(/\D/g, ''));
+            const numA = parseInt(a.id?.replace(/\D/g, '') || "0");
+            const numB = parseInt(b.id?.replace(/\D/g, '') || "0");
             return numA - numB;
           });
-          
+
           setFloorData({
-            name: sortedQuests[0].floorName,
-            brief: sortedQuests[0].floorBrief, 
+            name: sortedQuests[0].floorName || "Unnamed Floor",
+            brief: sortedQuests[0].floorBrief || "No brief available.",
             firstTaskId: sortedQuests[0].id,
             totalTasks: currentFloorQuests.length
           });
@@ -53,7 +55,7 @@ const SectorBriefing = () => {
           setError(true);
         }
       } catch (err) {
-        console.error("Linker Error:", err);
+        console.error("Briefing Error:", err);
         setError(true);
       } finally {
         setLoading(false);
@@ -88,7 +90,7 @@ const SectorBriefing = () => {
   return (
     <div className="briefing-wrapper" style={{ padding: '60px 20px', maxWidth: '900px', margin: '0 auto', color: '#fff', fontFamily: "'Fira Code', monospace" }}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        
+
         <header style={{ borderBottom: '1px solid #1e293b', paddingBottom: '30px', marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
             <BookOpen color="#10b981" size={40} />
@@ -103,20 +105,20 @@ const SectorBriefing = () => {
           </div>
         </header>
 
-        <section style={{ 
-          background: 'rgba(15, 23, 42, 0.8)', 
-          padding: '40px', 
-          borderRadius: '12px', 
+        <section style={{
+          background: 'rgba(15, 23, 42, 0.8)',
+          padding: '40px',
+          borderRadius: '12px',
           border: '1px solid #1e293b',
-          boxShadow: '0 20px 50px rgba(0,0,0,0.5)' 
+          boxShadow: '0 20px 50px rgba(0,0,0,0.5)'
         }}>
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#10b981', fontSize: '1rem', marginBottom: '25px', borderBottom: '1px solid rgba(16, 185, 129, 0.2)', paddingBottom: '10px', width: 'fit-content' }}>
             <Terminal size={18} /> KERNEL_LOGIC_SUMMARY
           </h3>
-          
-          <div style={{ 
-            lineHeight: '2', 
-            color: '#cbd5e1', 
+
+          <div style={{
+            lineHeight: '2',
+            color: '#cbd5e1',
             fontSize: '0.95rem',
             whiteSpace: 'pre-line',
             minHeight: '200px'
@@ -126,7 +128,7 @@ const SectorBriefing = () => {
         </section>
 
         <div style={{ marginTop: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-          <motion.button 
+          <motion.button
             whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(16, 185, 129, 0.4)' }}
             whileTap={{ scale: 0.95 }}
             onClick={startTasks}
@@ -144,11 +146,11 @@ const SectorBriefing = () => {
               gap: '12px'
             }}
           >
-            EXECUTE SECTOR TASKS <ChevronRight size={20} />
+            EXECUTE FLOOR TASKS <ChevronRight size={20} />
           </motion.button>
-          
+
           <div style={{ color: '#475569', fontSize: '0.75rem', fontWeight: 'bold' }}>
-             [ STATUS: AUTHORIZED | STACK_DEPTH: {floorData?.totalTasks} UNITS ]
+            [ STATUS: AUTHORIZED | STACK_DEPTH: {floorData?.totalTasks} UNITS ]
           </div>
         </div>
       </motion.div>

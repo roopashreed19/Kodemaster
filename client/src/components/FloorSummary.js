@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Award, RefreshCcw, LayoutDashboard, ShieldCheck, ShieldAlert, ChevronRight } from 'lucide-react';
+import { Star, LayoutGrid, ChevronRight, Share2, Award } from 'lucide-react';
 
 const FloorSummary = () => {
   const { subject, floorId } = useParams();
@@ -9,74 +9,87 @@ const FloorSummary = () => {
   const navigate = useNavigate();
   const { score = 0, total = 30 } = location.state || {};
   const percentage = Math.round((score / total) * 100);
-  const isPassed = percentage >= 70;
-
-  const handleReattempt = () => {
-    navigate(`/arena/${subject}/${floorId}/q1`);
-  };
+  const xpEarned = score * 10;
 
   return (
-    <div className="summary-container" style={{ minHeight: '100vh', background: '#020617', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-      <div className="bg-glow"></div>
-      
-      <motion.div 
+    <div style={{ minHeight: '100vh', background: '#020617', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        style={{ 
-          background: 'rgba(15, 23, 42, 0.8)', 
-          padding: '50px', 
-          borderRadius: '24px', 
-          border: `2px solid ${isPassed ? '#10b981' : '#ef4444'}`,
-          maxWidth: '600px',
+        style={{
+          background: '#0f172a',
+          padding: '60px 40px',
+          borderRadius: '24px',
+          border: '1px solid rgba(167, 139, 250, 0.2)',
+          maxWidth: '500px',
           width: '100%',
           textAlign: 'center',
-          backdropFilter: 'blur(10px)',
-          boxShadow: `0 0 50px ${isPassed ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}`
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
         }}
       >
-        <div style={{ marginBottom: '20px', display: 'inline-block' }}>
-          {isPassed ? (
-            <ShieldCheck size={80} color="#10b981" />
-          ) : (
-            <ShieldAlert size={80} color="#ef4444" />
-          )}
+        <div style={{ marginBottom: '30px' }}>
+          <Star size={80} color="#fbbf24" fill="#fbbf24" style={{ filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.4))' }} />
         </div>
 
-        <h1 style={{ fontSize: '2.5rem', fontWeight: '900', marginBottom: '10px' }}>
-          {isPassed ? "SECTOR SECURED" : "CRITICAL FAILURE"}
+        <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '2px' }}>
+          OUTPOST FINISHED
         </h1>
-        <p style={{ color: '#94a3b8', fontFamily: 'monospace', marginBottom: '40px' }}>
-          DEBRIEFING_LOG // {floorId?.toUpperCase()} // COMPLETED
+
+        <p style={{ color: '#94a3b8', fontSize: '1.2rem', marginBottom: '40px' }}>
+          You scored {score} out of {total}
         </p>
 
-        <div className="score-circle">
-          <span className="score-val" style={{ color: isPassed ? '#10b981' : '#ef4444' }}>{score}</span>
-          <span className="score-label">OUT OF {total}</span>
+        <div style={{
+          background: '#1e293b',
+          padding: '15px 30px',
+          borderRadius: '12px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: '10px',
+          marginBottom: '50px',
+          border: '1px solid rgba(167, 139, 250, 0.3)'
+        }}>
+          <span style={{ color: '#fbbf24', fontWeight: '900', fontSize: '1.2rem' }}>+{xpEarned} XP EARNED</span>
         </div>
 
-        <div style={{ marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '1.5rem', marginBottom: '5px' }}>{percentage}% ACCURACY</h2>
-          <p style={{ color: '#64748b' }}>
-            {isPassed 
-              ? "Optimization successful. All kernel instructions executed within safety parameters." 
-              : "Logic errors detected. Sector integrity compromised. Re-calibration recommended."}
-          </p>
-        </div>
-
-        <div className="summary-actions">
-          <button onClick={handleReattempt} className="btn-reattempt">
-            <RefreshCcw size={18} /> RE-ATTEMPT SECTOR
+        <div style={{ display: 'grid', gap: '15px' }}>
+          <button
+            onClick={() => navigate('/world/os')}
+            style={{
+              padding: '18px',
+              background: '#1e293b',
+              border: '1px solid #334155',
+              color: '#fff',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => e.target.style.background = '#334155'}
+            onMouseOut={(e) => e.target.style.background = '#1e293b'}
+          >
+            RETURN TO OS OUTPOST
           </button>
-  
-          <div className="secondary-actions">
-            <button onClick={() => navigate(`/world/${subject}`)} className="btn-secondary">
-              <Award size={16} /> SECTOR MAP
-            </button>
-            <button onClick={() => navigate('/dashboard')} className="btn-secondary">
-              <LayoutDashboard size={16} /> HUB
-            </button>
-          </div>
+
+          <button
+            onClick={() => navigate('/dashboard')}
+            style={{
+              padding: '18px',
+              background: 'transparent',
+              border: '1px solid rgba(255,255,255,0.05)',
+              color: '#94a3b8',
+              borderRadius: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              fontSize: '1rem'
+            }}
+          >
+            RETURN TO DASHBOARD
+          </button>
         </div>
+
       </motion.div>
     </div>
   );
