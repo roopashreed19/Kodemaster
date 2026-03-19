@@ -30,6 +30,7 @@ const DBMSQuest = () => {
     const [isAnswered, setIsAnswered] = useState(false);
     const [score, setScore] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [isSyncing, setIsSyncing] = useState(false);
 
     // Added code specific states
     const [query, setQuery] = useState("");
@@ -58,6 +59,9 @@ const DBMSQuest = () => {
             await api.post('/user/add-xp', {
                 xp: xpPoints,
                 topicId: topicId,
+                subject: 'DBMS',
+                status: finalScore > 0 ? 'success' : 'failed',
+                score: finalScore,
                 type: 'DBMS_QUEST'
             });
         } catch (err) {
@@ -104,7 +108,7 @@ const DBMSQuest = () => {
         }
     };
 
-    const nextStep = () => {
+    const nextStep = async () => {
         if (currentQ < data.questions.length - 1) {
             setCurrentQ(prev => prev + 1);
             setSelectedOption(null);
@@ -112,7 +116,9 @@ const DBMSQuest = () => {
             setQuery("");
             setQueryOutput("");
         } else {
-            saveXP(score);
+            setIsSyncing(true);
+            await saveXP(score);
+            setIsSyncing(false);
             setPhase('result');
         }
     };
@@ -267,14 +273,15 @@ const DBMSQuest = () => {
                                             nextStep();
                                         }
                                     }}
+                                    disabled={isSyncing}
                                     style={{
                                         flex: currentQ === 0 ? '0 1 300px' : 1,
                                         padding: '15px',
-                                        background: '#3b82f6',
+                                        background: isSyncing ? '#475569' : '#3b82f6',
                                         color: 'white',
                                         border: 'none',
                                         borderRadius: '12px',
-                                        cursor: 'pointer',
+                                        cursor: isSyncing ? 'not-allowed' : 'pointer',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -282,7 +289,7 @@ const DBMSQuest = () => {
                                         fontWeight: 'bold'
                                     }}
                                 >
-                                    {currentQ === data.questions.length - 1 ? "Finish Quest" : "Next Question"} <ChevronRight size={20} />
+                                    {isSyncing ? "Syncing..." : (currentQ === data.questions.length - 1 ? "Finish Test" : "Next Question")} <ChevronRight size={20} />
                                 </button>
                             </div>
 

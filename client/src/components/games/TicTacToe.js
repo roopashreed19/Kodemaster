@@ -51,7 +51,13 @@ const TicTacToe = () => {
 
   const handleWin = async () => {
     try {
-      await api.put('/user/add-xp', { xpToAdd: 20 });
+      await api.post('/user/add-xp', { 
+        xp: 20, 
+        subject: 'Arcade', 
+        topicId: 'tictactoe',
+        status: 'success',
+        score: 100
+      });
       alert("Victory! +20 XP authorized.");
       navigate('/arcade');
     } catch (e) {

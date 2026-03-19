@@ -5,7 +5,7 @@ import { Gamepad2, Grid3X3, BrainCircuit, LayoutDashboard, Zap } from 'lucide-re
 import { useNavigate } from 'react-router-dom';
 
 const games = [
-  { id: '2048', name: 'Logic 2048', icon: <Gamepad2 />, color: '#fbbf24', xp: '50 XP for 512' },
+  { id: 'memory', name: 'Memory Sync', icon: <BrainCircuit />, color: '#fbbf24', xp: '30 XP for Win' },
   { id: 'tictactoe', name: 'Neural Tic-Tac-Toe', icon: <Grid3X3 />, color: '#60a5fa', xp: '20 XP for Win' },
 ];
 

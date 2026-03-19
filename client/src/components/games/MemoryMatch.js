@@ -59,7 +59,13 @@ const MemoryMatch = () => {
 
   const claimXPRewards = async () => {
     try {
-      await api.put('/user/add-xp', { xpToAdd: 30 });
+      await api.post('/user/add-xp', { 
+        xp: 30, 
+        subject: 'Arcade', 
+        topicId: 'memory-sync',
+        status: 'success',
+        score: 100 // Full score for completion
+      });
       alert("🏆 Sync Successful! +30 XP");
       navigate('/arcade'); 
     } catch (err) {
