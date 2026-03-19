@@ -5,13 +5,15 @@ import {
     Database,
     Zap,
     ChevronRight,
+    ChevronLeft,
     LayoutDashboard,
     CheckCircle2,
     XCircle,
     Trophy,
     Info,
     Terminal,
-    Play
+    Play,
+    AlertTriangle
 } from 'lucide-react';
 import Editor from '@monaco-editor/react';
 import api from '../utils/api';
@@ -33,6 +35,8 @@ const DBMSQuest = () => {
     const [query, setQuery] = useState("");
     const [queryOutput, setQueryOutput] = useState("");
     const [isExecuting, setIsExecuting] = useState(false);
+    const [completedQuests, setCompletedQuests] = useState(new Set());
+    const [showFinishModal, setShowFinishModal] = useState(false);
 
     useEffect(() => {
         const fetchQuest = async () => {
@@ -62,9 +66,10 @@ const DBMSQuest = () => {
     }, [topicId]);
 
     const handleAnswer = (option) => {
-        if (isAnswered) return;
+        if (isAnswered || completedQuests.has(currentQ)) return;
         setSelectedOption(option);
         setIsAnswered(true);
+        setCompletedQuests(prev => new Set(prev).add(currentQ));
         if (option === data.questions[currentQ].correctAnswer) {
             setScore(prev => prev + 1);
         }
@@ -84,9 +89,10 @@ const DBMSQuest = () => {
             if (success) {
                 setQueryOutput(`${message}\n\nResult Table:\n${output || '<Empty Interface>'}`);
                 // Only give score if they haven't already passed it
-                if (!isAnswered) {
+                if (!isAnswered && !completedQuests.has(currentQ)) {
                     setScore(prev => prev + 1);
                     setIsAnswered(true);
+                    setCompletedQuests(prev => new Set(prev).add(currentQ));
                 }
             } else {
                 setQueryOutput(`${message}\n\nSystem Log:\n${output}`);
@@ -102,12 +108,22 @@ const DBMSQuest = () => {
         if (currentQ < data.questions.length - 1) {
             setCurrentQ(prev => prev + 1);
             setSelectedOption(null);
-            setIsAnswered(false);
+            setIsAnswered(completedQuests.has(currentQ + 1));
             setQuery("");
             setQueryOutput("");
         } else {
             saveXP(score);
             setPhase('result');
+        }
+    };
+
+    const prevStep = () => {
+        if (currentQ > 0) {
+            setCurrentQ(prev => prev - 1);
+            setSelectedOption(null);
+            setIsAnswered(completedQuests.has(currentQ - 1));
+            setQuery("");
+            setQueryOutput("");
         }
     };
 
@@ -117,9 +133,14 @@ const DBMSQuest = () => {
     return (
         <div style={{ minHeight: '100vh', background: '#020617', color: '#f8fafc', padding: '40px' }}>
 
-            <button onClick={() => navigate('/world/dbms')} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '30px' }}>
-                <LayoutDashboard size={18} /> Return to Kingdom Map
-            </button>
+            <div className="sticky-nav">
+                <button onClick={() => navigate('/world/dbms')} style={{ background: 'none', border: 'none', color: '#60a5fa', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LayoutDashboard size={18} /> Return to Kingdom Map
+                </button>
+                <button onClick={() => navigate('/dashboard')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <LayoutDashboard size={18} /> Return to Dashboard
+                </button>
+            </div>
 
             <div style={{ maxWidth: '900px', margin: '0 auto' }}>
                 <AnimatePresence mode="wait">
@@ -216,13 +237,98 @@ const DBMSQuest = () => {
                                 )}
                             </div>
 
+                            <div style={{ display: 'flex', justifyContent: currentQ === 0 ? 'flex-end' : 'space-between', marginTop: '40px', gap: '20px' }}>
+                                {currentQ > 0 && (
+                                    <button
+                                        onClick={prevStep}
+                                        style={{
+                                            flex: 1,
+                                            padding: '15px',
+                                            background: 'rgba(59, 130, 246, 0.1)',
+                                            color: '#60a5fa',
+                                            border: '1px solid #1e3a8a',
+                                            borderRadius: '12px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            gap: '8px',
+                                            fontWeight: 'bold'
+                                        }}
+                                    >
+                                        <ChevronLeft size={20} /> Previous Question
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => {
+                                        if (currentQ === data.questions.length - 1) {
+                                            setShowFinishModal(true);
+                                        } else {
+                                            nextStep();
+                                        }
+                                    }}
+                                    style={{
+                                        flex: currentQ === 0 ? '0 1 300px' : 1,
+                                        padding: '15px',
+                                        background: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '8px',
+                                        fontWeight: 'bold'
+                                    }}
+                                >
+                                    {currentQ === data.questions.length - 1 ? "Finish Quest" : "Next Question"} <ChevronRight size={20} />
+                                </button>
+                            </div>
+
+                            {/* Custom Finish Modal */}
+                            <AnimatePresence>
+                                {showFinishModal && (
+                                    <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(2, 6, 23, 0.85)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '20px' }}>
+                                        <motion.div
+                                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                                            style={{ background: '#1e293b', border: '1px solid #3b82f6', borderRadius: '24px', padding: '40px', maxWidth: '500px', width: '100%', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
+                                        >
+                                            <div style={{ background: 'rgba(245, 158, 11, 0.1)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 25px', color: '#f59e0b' }}>
+                                                <AlertTriangle size={40} />
+                                            </div>
+                                            <h2 style={{ fontSize: '2rem', color: '#f8fafc', marginBottom: '15px' }}>Finalize Transaction?</h2>
+                                            <p style={{ color: '#94a3b8', fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '35px' }}>
+                                                You are about to commit all answers to the database. This action will finalize your XP gains for this session.
+                                            </p>
+                                            <div style={{ display: 'flex', gap: '15px' }}>
+                                                <button
+                                                    onClick={() => setShowFinishModal(false)}
+                                                    style={{ flex: 1, padding: '15px', background: 'transparent', border: '1px solid #334155', color: '#94a3b8', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                                                >
+                                                    NO
+                                                </button>
+                                                <button
+                                                    onClick={() => {
+                                                        setShowFinishModal(false);
+                                                        nextStep();
+                                                    }}
+                                                    style={{ flex: 1, padding: '15px', background: '#3b82f6', border: 'none', color: 'white', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold' }}
+                                                >
+                                                    YES
+                                                </button>
+                                            </div>
+                                        </motion.div>
+                                    </div>
+                                )}
+                            </AnimatePresence>
+
                             {isAnswered && (
                                 <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ marginTop: '30px', padding: '25px', background: '#1e3a8a', borderRadius: '15px', border: '1px solid #2563eb' }}>
                                     <p style={{ color: '#60a5fa', fontWeight: 'bold', marginBottom: '10px' }}>QUERY ANALYSIS:</p>
                                     <p style={{ lineHeight: '1.6' }}>{data.questions[currentQ].explanation}</p>
-                                    <button onClick={nextStep} style={{ float: 'right', marginTop: '15px', background: '#3b82f6', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        Next Relation <ChevronRight size={18} />
-                                    </button>
                                 </motion.div>
                             )}
                         </motion.div>
@@ -238,9 +344,46 @@ const DBMSQuest = () => {
                                 +{score * 20} XP UPLOADED
                             </div>
 
-                            <button onClick={() => navigate('/world/dbms')} style={{ width: '100%', padding: '18px', background: '#1e293b', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-                                RETURN TO KINGDOM HUB
-                            </button>
+                            <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                                <button
+                                    onClick={() => navigate('/world/dbms')}
+                                    style={{
+                                        width: '100%',
+                                        padding: '18px',
+                                        background: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '12px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '10px'
+                                    }}
+                                >
+                                    <Database size={20} /> RETURN TO KINGDOM HUB
+                                </button>
+                                <button
+                                    onClick={() => navigate('/dashboard')}
+                                    style={{
+                                        width: '100%',
+                                        padding: '16px',
+                                        background: 'transparent',
+                                        color: '#94a3b8',
+                                        border: '1px solid #1e3a8a',
+                                        borderRadius: '12px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '10px'
+                                    }}
+                                >
+                                    <LayoutDashboard size={18} /> DASHBOARD
+                                </button>
+                            </div>
                         </motion.div>
                     )}
 

@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Play, X, Star, Loader2, LayoutDashboard } from 'lucide-react';
-import { challenges as localChallenges } from '../data/challenges'; 
-import api from '../utils/api'; 
-import { handleQuestVictory } from '../utils/questHelper';
+import { Lock, Play, X, Star, Loader2, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { challenges as localChallenges } from '../data/challenges';
+import api from '../utils/api';
 
 const floors = [
   { id: 1, name: "Array Abyss", status: "unlocked", difficulty: "Easy", color: "#f87171" },
@@ -24,12 +23,12 @@ const DSADungeon = () => {
   const [selectedFloor, setSelectedFloor] = useState(null);
   const [currentQuests, setCurrentQuests] = useState([]);
   const [loading, setLoading] = useState(false);
-  
 
+  // VICTORY STATES
   const [showVictory, setShowVictory] = useState(false);
   const [completedFloor, setCompletedFloor] = useState(null);
 
-
+  // CHECK FLOOR COMPLETION LOGIC
   const checkFloorCompletion = async (floorId) => {
     try {
       const response = await api.get(`/user/progress/${floorId}`);
@@ -68,45 +67,16 @@ const DSADungeon = () => {
   };
 
   return (
-    <div className="dungeon-container">
-     
-      <button 
-        className="back-to-dashboard" 
-        onClick={() => navigate('/dashboard')}
-        style={{
-          position: 'fixed',
-          top: '25px',
-          left: '25px',
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          background: 'rgba(30, 41, 59, 0.7)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          color: '#94a3b8',
-          padding: '12px 18px',
-          borderRadius: '12px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease',
-          backdropFilter: 'blur(10px)',
-          fontSize: '14px',
-          fontWeight: '600',
-          boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = '#fff';
-          e.currentTarget.style.borderColor = '#60a5fa';
-          e.currentTarget.style.transform = 'translateX(5px)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = '#94a3b8';
-          e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-          e.currentTarget.style.transform = 'translateX(0)';
-        }}
-      >
-        <LayoutDashboard size={18} />
-        <span>Return to Dashboard</span>
-      </button>
+    <div className="dungeon-container" style={{ paddingTop: 0 }}>
+      {/* BACK TO DASHBOARD BUTTON */}
+      <div className="sticky-nav" style={{ marginBottom: '60px' }}>
+        <button 
+          onClick={() => navigate('/dashboard')} 
+          style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+        >
+          <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} /> Back to Dashboard
+        </button>
+      </div>
 
       <header className="dungeon-header">
         <h1>FLOOR SELECTOR</h1>
@@ -115,7 +85,7 @@ const DSADungeon = () => {
 
       <div className="floor-path">
         {floors.map((floor, index) => (
-          <motion.div 
+          <motion.div
             key={floor.id}
             initial={{ opacity: 0, x: index % 2 === 0 ? -100 : 100 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -124,15 +94,15 @@ const DSADungeon = () => {
           >
             {index !== floors.length - 1 && <div className="connection-line"></div>}
             <div className="portal-wrapper">
-              <div 
-                className="portal-circle" 
+              <div
+                className="portal-circle"
                 style={{ borderColor: floor.color }}
                 onClick={() => handleFloorClick(floor)}
               >
                 {floor.status === "locked" ? <Lock size={30} /> : <Play size={30} />}
               </div>
             </div>
-            
+
             <div className="floor-details">
               <span className="floor-number">FLOOR {floor.id}</span>
               <h3>{floor.name}</h3>
@@ -148,7 +118,7 @@ const DSADungeon = () => {
       <AnimatePresence>
         {selectedFloor && (
           <div className="quest-modal-overlay">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
@@ -171,9 +141,9 @@ const DSADungeon = () => {
                 ) : (
                   currentQuests.length > 0 ? (
                     currentQuests.map((q) => (
-                      <div 
-                        key={q.id} 
-                        className="quest-card" 
+                      <div
+                        key={q.id}
+                        className="quest-card"
                         onClick={() => navigate(`/arena/dsa/floor${selectedFloor.id}/${q.id}`)}
                       >
                         <div className="quest-info">
@@ -198,11 +168,11 @@ const DSADungeon = () => {
         )}
       </AnimatePresence>
 
-    
+      {/* VICTORY ACHIEVEMENT MODAL */}
       <AnimatePresence>
         {showVictory && completedFloor && (
           <div className="victory-overlay">
-            <motion.div 
+            <motion.div
               initial={{ scale: 0.5, opacity: 0, rotate: -10 }}
               animate={{ scale: 1, opacity: 1, rotate: 0 }}
               exit={{ scale: 0.5, opacity: 0 }}
@@ -217,8 +187,8 @@ const DSADungeon = () => {
               <div className="reward-badge">
                 <span>+500 BONUS XP</span>
               </div>
-              <button 
-                className="continue-btn" 
+              <button
+                className="continue-btn"
                 style={{ background: completedFloor.color }}
                 onClick={() => setShowVictory(false)}
               >

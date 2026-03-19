@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BookOpen, Database, Cpu, Globe, Trophy, Zap, Coins, Code2, Flame } from 'lucide-react';
+import { BookOpen, Database, Cpu, Globe, Trophy, Zap, Coins, Code2, Flame, Box } from 'lucide-react';
+import ContestTimer from './ContestTimer';
 import { Network } from 'lucide-react';
 import api from '../utils/api';
 
@@ -11,6 +13,23 @@ const subjects = [
   { id: 'dbms', name: 'DBMS Kingdom', icon: <Database size={40} />, color: '#60a5fa', lore: 'Conquer the Relational schemas.' },
   { id: 'cp-arena', name: 'OOPs Arena', icon: <Code2 size={40} />, color: '#c084fc', lore: 'Battle in real-time coding contests.' },
   { id: 'cn', name: 'CN Arena', icon: <Network size={32} />, color: '#2dd4bf', lore: 'Route your way through the layers of the web.' },
+  {
+    id: 'dbms',
+    name: 'DBMS Kingdom',
+    icon: <Database size={40} />,
+    color: '#60a5fa',
+    lore: 'Conquer the Relational schemas.',
+    path: '/world/dbms'
+  },
+  { id: 'oops', name: 'OOPs Oasis', icon: <Box size={40} />, color: '#c084fc', lore: 'Master the principles of Object-Oriented Design.' },
+  {
+    id: 'cn',
+    name: 'CN Arena',
+    icon: <Network size={32} />,
+    color: '#2dd4bf',
+    lore: 'Route your way through the layers of the web.', // Updated lore
+    path: '/world/cn'
+  },
   { id: 'os', name: 'OS Outpost', icon: <Cpu size={40} />, color: '#4ade80', lore: 'Navigate the threads of scheduling.' },
   { id: 'aptitude', name: 'Aptitude Arena', icon: <Globe size={40} />, color: '#fbbf24', lore: 'Sharpen your logic for the final battle.' },
 ];
