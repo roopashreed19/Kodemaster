@@ -138,7 +138,7 @@ const AptitudeWorld = () => {
                 marginBottom: '25px',
                 color: '#6366f1'
               }}>
-                <BoxIcon size={24} /> {/* Placeholder for a dynamic icon */}
+
                 <Brain size={24} />
               </div>
 
