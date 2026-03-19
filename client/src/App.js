@@ -18,6 +18,12 @@ import DBMSQuest from './components/DBMSQuest';
 import Arcade from './components/Arcade';
 import MemoryMatch from './components/games/MemoryMatch';
 import TicTacToe from './components/games/TicTacToe';
+import Wordle from './components/games/Wordle';
+import SlidingPuzzle from './components/games/SlidingPuzzle';
+import Pacman from './components/games/Pacman';
+import CipherSearch from './components/games/CipherSearch';
+
+
 
 function App() {
   return (
@@ -40,6 +46,10 @@ function App() {
         <Route path="/arcade" element={<Arcade />} />
         <Route path="/games/memory" element={<MemoryMatch />} />
         <Route path="/games/tictactoe" element={<TicTacToe />} />
+        <Route path="/games/wordle" element={<Wordle />} />
+        <Route path="/games/sliding-puzzle" element={<SlidingPuzzle />} />
+        <Route path="/games/pacman" element={<Pacman />} />
+        <Route path="/games/wordsearch" element={<CipherSearch />} />
       </Routes>
     </Router>
   );

@@ -256,7 +256,7 @@ const seedDB = async () => {
         await mongoose.connect(process.env.MONGO_URI);
         await DBMS.deleteMany({});
         await DBMS.insertMany(dbmsData);
-        console.log("💾 The DBMS Kingdom has been initialized with 5 Topics!");
+        console.log("The DBMS Kingdom has been initialized with 5 Topics!");
         process.exit();
     } catch (err) {
         console.error(err);

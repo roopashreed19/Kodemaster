@@ -166,7 +166,7 @@ const seedDB = async () => {
     await mongoose.connect(process.env.MONGO_URI);
     await OOPSArena.deleteMany({});
     await OOPSArena.insertMany(oopsData);
-    console.log("🧩 The OOPs Arena has been initialized with 10 Concepts & 50 Questions!");
+    console.log("The OOPs Arena has been initialized with 10 Concepts & 50 Questions!");
     process.exit();
   } catch (err) {
     console.error(err);

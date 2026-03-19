@@ -152,7 +152,7 @@ for i, tc in enumerate(test_cases):
                     allPassed = false;
                     feedback += `TC ${index + 1}: Expected ${expected}, got ${actual}\n`;
                 } else {
-                    feedback += `TC ${index + 1}: Passed ✅\n`;
+                    feedback += `TC ${index + 1}: Passed \n`;
                 }
             });
         }
@@ -170,7 +170,7 @@ for i, tc in enumerate(test_cases):
         res.json({
             success: allPassed,
             output: feedback || rawOutput,
-            message: allPassed ? `✅ Victory! +${pointsEarned} XP` : "❌ Wrong Answer",
+            message: allPassed ? ` Victory! +${pointsEarned} XP` : "❌ Wrong Answer",
             stats: updatedStats // Frontend can now read the new XP directly
         });
 
@@ -223,14 +223,14 @@ router.post('/run-sql', auth, (req, res) => { // Added auth middleware
                 res.json({
                     success: true,
                     output: userOutput,
-                    message: `✅ Valid Query! +${pointsEarned} XP`,
+                    message: `Valid Query! +${pointsEarned} XP`,
                     stats: { xp: user.xp, coins: user.coins }
                 });
             } else {
                 res.json({
                     success: false,
                     output: `Result:\n${userOutput || "<No Rows>"}\n\nExpected:\n${expectedOutput}`,
-                    message: "❌ Incorrect Result Set"
+                    message: "Incorrect Result Set"
                 });
             }
         });
@@ -341,7 +341,7 @@ for i, tc in enumerate(test_cases):
                     allPassed = false;
                     feedback += `TC ${index + 1}: Expected ${expected}, got ${actual}\n`;
                 } else {
-                    feedback += `TC ${index + 1}: Passed ✅\n`;
+                    feedback += `TC ${index + 1}: Passed\n`;
                 }
             });
         }
@@ -349,7 +349,7 @@ for i, tc in enumerate(test_cases):
         res.json({
             success: allPassed,
             output: feedback || rawOutput,
-            message: allPassed ? "✅ Victory! All Test Cases Passed." : "❌ Wrong Answer"
+            message: allPassed ? "Victory! All Test Cases Passed." : "❌ Wrong Answer"
         });
 
     } catch (err) {
@@ -469,7 +469,7 @@ for i, tc in enumerate(test_cases):
                     allPassed = false;
                     feedback += `TC ${index + 1}: Expected ${expected}, got ${actual}\n`;
                 } else {
-                    feedback += `TC ${index + 1}: Passed ✅\n`;
+                    feedback += `TC ${index + 1}: Passed \n`;
                 }
             });
         }
@@ -519,7 +519,7 @@ for i, tc in enumerate(test_cases):
         res.json({
             success: allPassed,
             output: feedback || rawOutput,
-            message: allPassed ? "✅ Victory! Submission accepted." : "❌ Wrong Answer",
+            message: allPassed ? "Victory! Submission accepted." : "❌ Wrong Answer",
             xpAdded,
             levelUp
         });
@@ -570,13 +570,13 @@ router.post('/run-sql', (req, res) => {
                 res.json({
                     success: true,
                     output: userOutput,
-                    message: "✅ Valid Query! System logic verified."
+                    message: "Valid Query! System logic verified."
                 });
             } else {
                 res.json({
                     success: false,
                     output: `Result:\n${userOutput || "<No Rows>"}\n\nExpected:\n${expectedOutput}`,
-                    message: "❌ Incorrect Result Set"
+                    message: "Incorrect Result Set"
                 });
             }
         });
