@@ -77,6 +77,39 @@ const BattleArena = () => {
     }
   };
 
+  const submitCode = async () => {
+    if (!code || !questData) return;
+    setIsRunning(true);
+    setOutput("Submitting your logic to the Archives... ");
+
+    try {
+      const response = await api.post('/judge/submit', {
+        code: code,
+        language: language,
+        testCases: questData.testCases,
+        questId: questionId,
+        floorId: floorId,
+        subject: subject,
+        expectedXp: questData.xp
+      });
+
+      const { success, output: executionOutput, message, xpAdded, levelUp } = response.data;
+      
+      if (success) {
+        setOutput(`VICTORY!\n\n${executionOutput}\n\n${xpAdded ? '+' + xpAdded + ' XP added to your profile.' : 'You have already completed this quest.'}${levelUp ? '\n\nLEVEL UP!' : ''}`);
+        alert("Solution Submitted Successfully! Quest cleared.");
+      } else {
+        setOutput(`DEFEAT!\n\n${executionOutput}\n\nError: ${message || "Logic failure detected."}`);
+        alert("Submission Failed. Check the terminal for details.");
+      }
+    } catch (err) {
+      setOutput("SYSTEM ERROR: The Judge is unreachable. Ensure the backend server is running.");
+      alert("System Error. Could not submit.");
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="loading-screen" style={{ color: 'white', textAlign: 'center', marginTop: '20%' }}>
@@ -135,13 +168,22 @@ const BattleArena = () => {
                 <option value="cpp">C++ 20</option>
             </select>
           </div>
-          <button 
-            className={`run-btn ${isRunning ? 'loading' : ''}`} 
-            onClick={runCode}
-            disabled={isRunning}
-          >
-            {isRunning ? "EXECUTING..." : <><Play size={16} /> RUN CODE</>}
-          </button>
+          <div className="action-btns" style={{ display: 'flex', gap: '10px' }}>
+            <button 
+              className={`run-btn ${isRunning ? 'loading' : ''}`} 
+              onClick={runCode}
+              disabled={isRunning}
+            >
+              {isRunning ? "EXECUTING..." : <><Play size={16} /> RUN CODE</>}
+            </button>
+            <button 
+              className={`run-btn submit-btn ${isRunning ? 'loading' : ''}`} 
+              onClick={submitCode}
+              disabled={isRunning}
+            >
+              SUBMIT
+            </button>
+          </div>
         </div>
 
         <Editor

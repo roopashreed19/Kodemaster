@@ -61,7 +61,8 @@ router.get('/progress/:floorId', auth, async (req, res) => {
       allCleared: isAllCleared,
       progress: `${passedQuests.length}/${totalQuests}`,
       count: passedQuests.length,
-      total: totalQuests
+      total: totalQuests,
+      passedQuests: passedQuests
     });
   } catch (err) {
     console.error(err.message);
