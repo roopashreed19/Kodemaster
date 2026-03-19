@@ -26,6 +26,8 @@ const Wordle = () => {
   const [currentGuess, setCurrentGuess] = useState('');
   const [currentRow, setCurrentRow] = useState(0);
   const [gameState, setGameState] = useState('playing');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
   const navigate = useNavigate();
 
   const handleInput = (key) => {
@@ -61,7 +63,10 @@ const Wordle = () => {
 
   const handleWin = async () => {
     try {
-      await api.post('/user/add-xp', { xp: 40, subject: 'Arcade', topicId: 'wordle_master', status: 'success' });
+      await api.post('/user/add-xp', { xp: 40, coins: 30, subject: 'Arcade', topicId: 'wordle_master', status: 'success' });
+      setPopupText("Word Master! +40 XP +30 COINS added.");
+      setShowPopup(true);
+      setTimeout(() => setShowPopup(false), 2200);
     } catch (err) { console.error("XP update failed", err); }
   };
 
@@ -100,9 +105,19 @@ const Wordle = () => {
   return (
     <div style={{ minHeight: '100vh', background: '#121213', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '20px' }}>
       <header style={{ width: '100%', borderBottom: '1px solid #3a3a3c', paddingBottom: '10px', marginBottom: '30px', display: 'flex', justifyContent: 'center', position: 'relative' }}>
-        <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', left: 0, background: 'none', border: 'none', color: '#818384', cursor: 'pointer' }}><LayoutDashboard /></button>
+        <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', left: '20px', top: '10px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <LayoutDashboard size={18} /> Exit
+        </button>
         <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>CODEQUEST</h1>
       </header>
+
+      {showPopup && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#0f172a', border: '2px solid #22c55e', borderRadius: '12px', padding: '16px 22px', textAlign: 'center', boxShadow: '0 0 18px rgba(34, 197, 94, 0.5)' }}>
+            <p style={{ margin: 0, color: '#fbbf24', fontWeight: 'bold', fontSize: '1rem' }}>{popupText}</p>
+          </div>
+        </div>
+      )}
 
       {/* --- GRID --- */}
       <div style={{ display: 'grid', gridTemplateRows: `repeat(${MAX_GUESSES}, 1fr)`, gap: '5px', marginBottom: '40px' }}>

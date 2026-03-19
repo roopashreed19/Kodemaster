@@ -10,7 +10,7 @@ const calculateLevel = (xp) => Math.floor(xp / 50) + 1;
 
 
 router.post('/add-xp', auth, async (req, res) => {
-  const { xp, topicId, subject, status, score } = req.body;
+  const { xp, coins, topicId, subject, status, score } = req.body;
   try {
     let user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ msg: 'User not found' });
@@ -18,6 +18,8 @@ router.post('/add-xp', auth, async (req, res) => {
     const oldLevel = calculateLevel(user.xp);
     
     user.xp += parseInt(xp) || 0;
+    user.coins = (user.coins || 0) + (parseInt(coins) || 0);
+    
     const newLevel = calculateLevel(user.xp);
     
     // Log history
@@ -46,7 +48,7 @@ router.post('/add-xp', auth, async (req, res) => {
     }
 
     await user.save();
-    res.json({ xp: user.xp, level: user.level, levelUp });
+    res.json({ xp: user.xp, level: user.level, coins: user.coins, levelUp });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -137,6 +139,56 @@ router.get('/me', auth, async (req, res) => {
     res.json({ 
         user: { ...user.toObject(), xpHistory }, 
         recentSubmissions: submissions 
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route   POST api/user/daily-checkin
+// @desc    Claim daily check-in reward
+router.post('/daily-checkin', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    const now = new Date();
+    const lastCheckIn = user.lastCheckIn;
+    
+    // Check if already checked in today (same calendar day)
+    if (lastCheckIn && 
+        lastCheckIn.getDate() === now.getDate() && 
+        lastCheckIn.getMonth() === now.getMonth() && 
+        lastCheckIn.getFullYear() === now.getFullYear()) {
+      return res.status(400).json({ msg: 'Already checked in today' });
+    }
+
+    // Calculate streak
+    let newStreak = 1;
+    if (lastCheckIn) {
+      const diffTime = Math.abs(now - lastCheckIn);
+      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      
+      if (diffDays < 2) { // Less than 48 hours since last check-in
+        newStreak = (user.checkInStreak || 0) + 1;
+      }
+    }
+
+    // Calculate reward: base 10 + 5 per streak day, cap at 50
+    const reward = Math.min(10 + (newStreak - 1) * 5, 50);
+    
+    user.coins = (user.coins || 0) + reward;
+    user.checkInStreak = newStreak;
+    user.lastCheckIn = now;
+
+    await user.save();
+
+    res.json({ 
+      msg: 'Daily check-in successful', 
+      reward, 
+      coins: user.coins, 
+      streak: user.checkInStreak 
     });
   } catch (err) {
     console.error(err.message);

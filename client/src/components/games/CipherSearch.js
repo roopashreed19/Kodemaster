@@ -21,6 +21,9 @@ const CipherSearch = () => {
   const [selection, setSelection] = useState([]); // Stores [{r, c}, ...]
   const [isDragging, setIsDragging] = useState(false);
   const [gameState, setGameState] = useState('playing');
+  const [level, setLevel] = useState(1);
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState('');
   const navigate = useNavigate();
 
   // Helper to check if a word can fit in the grid
@@ -101,6 +104,18 @@ const CipherSearch = () => {
     }
   };
 
+  const awardLevelReward = async () => {
+    try {
+      await api.post('/user/add-xp', { 
+        xp: 15,
+        coins: 10,
+        subject: 'Arcade', 
+        topicId: `cipher_search_level_${level}`,
+        status: 'success'
+      });
+    } catch (err) { console.error(err); }
+  };
+
   const handlePointerUp = async () => {
     if (!isDragging) return;
     setIsDragging(false);
@@ -113,9 +128,9 @@ const CipherSearch = () => {
       
       if (newFound.length === currentWords.length) {
         setGameState('won');
-        try {
-          await api.post('/user/add-xp', { xp: 45, subject: 'Arcade', topicId: 'cipher_search' });
-        } catch (err) { console.error(err); }
+        setPopupText(`LEVEL ${level} COMPLETE! Press NEXT LEVEL to claim +15 XP +10 COINS`);
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 2400);
       }
     }
     setSelection([]);
@@ -134,6 +149,14 @@ const CipherSearch = () => {
         <h1 style={{ color: '#22c55e', letterSpacing: '6px', textShadow: '0 0 10px #22c55e44', margin: 0 }}>CIPHER_SEARCH.SYS</h1>
         <p style={{ color: '#475569', marginTop: '5px' }}>Drag to highlight and decrypt data strings.</p>
       </div>
+
+      {showPopup && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+          <div style={{ background: '#0f172a', border: '2px solid #22c55e', borderRadius: '14px', padding: '20px 30px', textAlign: 'center', boxShadow: '0 0 20px rgba(34, 197, 94, 0.5)' }}>
+            <p style={{ margin: 0, color: '#fbbf24', fontWeight: 'bold', fontSize: '1.1rem' }}>{popupText}</p>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: '50px', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'flex-start' }}>
         {/* GRID SECTION */}
@@ -177,9 +200,16 @@ const CipherSearch = () => {
 
           {gameState === 'won' && (
             <div style={{ marginTop: '30px', textAlign: 'center', animation: 'fadeIn 0.5s' }}>
-              <p style={{ color: '#22c55e', fontWeight: 'bold', marginBottom: '15px' }}>DECRYPTION SUCCESSFUL!</p>
+              <p style={{ color: '#22c55e', fontWeight: 'bold', marginBottom: '15px' }}>LEVEL {level} COMPLETE!</p>
               <button 
-                onClick={generateGrid} 
+                onClick={async () => {
+                  await awardLevelReward();
+                  setPopupText(`+15 XP +10 COINS awarded for Level ${level}`);
+                  setShowPopup(true);
+                  setTimeout(() => setShowPopup(false), 2200);
+                  setLevel(prev => prev + 1);
+                  generateGrid();
+                }}
                 style={{ width: '100%', padding: '12px', background: '#22c55e', color: '#020617', border: 'none', borderRadius: '10px', fontWeight: '900', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
                 <RotateCcw size={18} /> NEXT LEVEL

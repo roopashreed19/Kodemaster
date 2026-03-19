@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Ghost } from 'lucide-react';
+import { LayoutDashboard, Ghost, LogOut } from 'lucide-react'; // Added LogOut icon
 import api from '../../utils/api';
 
 const GRID_SIZE = 15;
-const CELL_SIZE = 30; // Consistent size for logic and UI
+const CELL_SIZE = 30; 
 const INITIAL_PACMAN = { x: 1, y: 1, dir: 0 };
 const INITIAL_GHOST = { x: 13, y: 13 };
 
@@ -37,7 +37,6 @@ const Pacman = () => {
   const pacmanRef = useRef(pacman);
   useEffect(() => { pacmanRef.current = pacman; }, [pacman]);
 
-  // 1. Initialize dots on paths
   useEffect(() => {
     let newDots = [];
     MAP.forEach((row, y) => {
@@ -50,7 +49,6 @@ const Pacman = () => {
 
   const isValidMove = (x, y) => MAP[y] && MAP[y][x] === 0;
 
-  // 2. Optimized Player Movement
   const handleKeyDown = useCallback((e) => {
     if (gameState !== 'playing') return;
     let dx = 0, dy = 0, rotation = 0;
@@ -82,7 +80,6 @@ const Pacman = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // 3. Smart Ghost AI (Avoids Walls & Chases)
   useEffect(() => {
     if (gameState !== 'playing') return;
     const ghostInterval = setInterval(() => {
@@ -107,7 +104,6 @@ const Pacman = () => {
     return () => clearInterval(ghostInterval);
   }, [gameState]);
 
-  // 4. Game Loop Logic
   useEffect(() => {
     if (pacman.x === ghost.x && pacman.y === ghost.y) setGameState('lost');
     if (dots.length === 0 && score > 0) {
@@ -118,21 +114,44 @@ const Pacman = () => {
 
   const handleXP = async () => {
     try {
-      await api.post('/user/add-xp', { xp: 60, subject: 'Arcade', topicId: 'pacman_core' });
+      await api.post('/user/add-xp', { 
+        xp: 60,
+        coins: 40,
+        subject: 'Arcade', 
+        topicId: 'pacman_core',
+        status: 'success'
+      });
     } catch (e) { console.error(e); }
+  };
+
+  // Shared button styles for consistency
+  const btnStyle = {
+    padding: '10px 25px',
+    borderRadius: '8px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    border: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    transition: '0.2s opacity'
   };
 
   return (
     <div style={{ minHeight: '100vh', background: '#020617', color: '#fff', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontFamily: 'monospace', padding: '20px' }}>
       
-      <button onClick={() => navigate('/arcade')} style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', zIndex: 10 }}>
-        <LayoutDashboard size={18} /> Exit
+      {/* Top Exit Button */}
+      <button 
+        onClick={() => navigate('/arcade')} 
+        style={{ position: 'absolute', top: '20px', left: '20px', background: 'rgba(30, 41, 59, 0.5)', border: '1px solid #334155', color: '#94a3b8', padding: '10px 15px', borderRadius: '10px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', gap: '8px' }}
+      >
+        <LayoutDashboard size={18} /> Exit to Arcade
       </button>
 
       <h1 style={{ color: '#facc15', letterSpacing: '4px', marginBottom: '10px' }}>PACMAN.SYS</h1>
       <div style={{ fontSize: '1.2rem', color: '#60a5fa', marginBottom: '20px', fontWeight: 'bold' }}>DATA COLLECTED: {score}</div>
 
-      {/* Game Board Container */}
       <div style={{ 
         position: 'relative', 
         display: 'grid', 
@@ -145,7 +164,6 @@ const Pacman = () => {
         boxSizing: 'content-box',
         overflow: 'hidden'
       }}>
-        {/* Render Map & Dots */}
         {MAP.map((row, y) => row.map((cell, x) => (
           <div key={`${x}-${y}`} style={{ 
             width: `${CELL_SIZE}px`, 
@@ -161,7 +179,6 @@ const Pacman = () => {
           </div>
         )))}
 
-        {/* PACMAN - Logical Center Positioning */}
         <div style={{ 
           position: 'absolute', 
           width: `${CELL_SIZE}px`, 
@@ -175,7 +192,6 @@ const Pacman = () => {
           zIndex: 3,
           transform: `rotate(${pacman.dir}deg)` 
         }}>
-          {/* Body is smaller (20px) than cell (30px) to prevent wall touching */}
           <div style={{ 
             width: '20px', 
             height: '20px', 
@@ -185,7 +201,6 @@ const Pacman = () => {
           }} />
         </div>
 
-        {/* GHOST - Logical Center Positioning */}
         <div style={{ 
           position: 'absolute', 
           width: `${CELL_SIZE}px`, 
@@ -202,11 +217,36 @@ const Pacman = () => {
         </div>
       </div>
 
-      {/* Game State Overlay */}
+      {/* Enhanced Game State Overlay */}
       {gameState !== 'playing' && (
-        <div style={{ marginTop: '30px', background: 'rgba(15, 23, 42, 0.95)', padding: '20px 40px', borderRadius: '16px', border: `2px solid ${gameState === 'won' ? '#22c55e' : '#f87171'}`, textAlign: 'center', boxShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
-          <h2 style={{ color: gameState === 'won' ? '#22c55e' : '#f87171', margin: 0 }}>{gameState === 'won' ? 'SYSTEM PURGED' : 'CORE BREACHED'}</h2>
-          <button onClick={() => window.location.reload()} style={{ marginTop: '15px', padding: '10px 25px', background: '#facc15', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}>REBOOT SYSTEM</button>
+        <div style={{ 
+          marginTop: '30px', 
+          background: 'rgba(15, 23, 42, 0.95)', 
+          padding: '20px 40px', 
+          borderRadius: '16px', 
+          border: `2px solid ${gameState === 'won' ? '#22c55e' : '#f87171'}`, 
+          textAlign: 'center', 
+          boxShadow: '0 0 20px rgba(0,0,0,0.5)' 
+        }}>
+          <h2 style={{ color: gameState === 'won' ? '#22c55e' : '#f87171', marginBottom: '20px' }}>
+            {gameState === 'won' ? 'SYSTEM PURGED' : 'CORE BREACHED'}
+          </h2>
+          
+          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+            <button 
+              onClick={() => window.location.reload()} 
+              style={{ ...btnStyle, background: '#facc15', color: '#020617' }}
+            >
+              REBOOT SYSTEM
+            </button>
+            
+            <button 
+              onClick={() => navigate('/arcade')} 
+              style={{ ...btnStyle, background: '#1e293b', color: '#f87171', border: '1px solid #f87171' }}
+            >
+              <LogOut size={18} /> TERMINATE
+            </button>
+          </div>
         </div>
       )}
     </div>

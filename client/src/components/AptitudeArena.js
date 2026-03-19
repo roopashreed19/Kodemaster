@@ -41,17 +41,19 @@ const AptitudeArena = () => {
   const saveProgress = useCallback(async (finalScore) => {
     try {
       const xpEarned = finalScore * 10;
+      const coinReward = finalScore * 5;
 
       await api.post('/user/add-xp', {
         xp: xpEarned,
+        coins: coinReward,
         topicId: topicId,
         subject: 'Aptitude',
         status: finalScore > 0 ? 'success' : 'failed',
         score: finalScore
       });
-      console.log(`Added ${xpEarned} XP to the hero's journey!`);
+      console.log(`Added ${xpEarned} XP and ${coinReward} coins to the hero's journey!`);
     } catch (err) {
-      console.error("Failed to sync XP with the Citadel:", err);
+      console.error("Failed to sync rewards with the Citadel:", err);
     }
   }, [topicId]);
 
@@ -234,8 +236,14 @@ const AptitudeArena = () => {
             <Star size={80} color="#fbbf24" fill="#fbbf24" style={{ margin: '0 auto 20px' }} />
             <h2 style={{ fontSize: '2rem' }}>GAUNTLET FINISHED</h2>
             <p style={{ fontSize: '1.2rem', color: '#94a3b8', margin: '10px 0 30px' }}>You scored {score} out of {topicData.questions.length}</p>
-            <div style={{ padding: '20px', background: '#0f172a', borderRadius: '12px', display: 'inline-block', marginBottom: '30px' }}>
-              <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>+{score * 10} XP EARNED</span>
+            <div style={{ margin: '30px 0', display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center' }}>
+              <div style={{ padding: '15px 25px', background: '#0f172a', borderRadius: '12px', border: '1px solid #334155', width: '200px' }}>
+                <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '1.2rem' }}>+{score * 10} XP</span>
+              </div>
+              <div style={{ padding: '15px 25px', background: '#0f172a', borderRadius: '12px', border: '1px solid #fbbf24', width: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                <span style={{ color: '#fbbf24', fontWeight: 'bold', fontSize: '1.2rem' }}>+{score * 5} COINS</span>
+                <Star size={20} fill="#fbbf24" stroke="none" />
+              </div>
             </div>
             <button onClick={() => navigate('/world/aptitude')} style={{ display: 'block', width: '100%', padding: '15px', background: '#334155', border: 'none', borderRadius: '12px', color: '#fff', fontWeight: 'bold', cursor: 'pointer', marginBottom: '10px' }}>
               RETURN TO APTITUDE ARENA
