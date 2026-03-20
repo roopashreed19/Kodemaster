@@ -1,59 +1,34 @@
+
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
 // 1. Initialize App
 const app = express();
 
-// 2. Middleware & CORS Configuration
-const allowedOrigins = [
-  "https://kodemaster-phi.vercel.app",
-  "http://localhost:3000",
-  "http://localhost:3001"
-];
-
-// Consolidated CORS configuration
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl) or if in allowed list
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  // Explicitly allowing x-auth-token for your JWT authentication
-  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"] 
-}));
-
-// This line handles the "test" (OPTIONS) preflight requests from the browser
-app.options('(.*)', cors());
-
+// 2. Middleware (MUST come before routes)
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+  origin: [process.env.frontendurl,process.env.backendurl],
+  credentials: true
+}));
 
 // 3. Debugging Logs
 console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
 
 // 4. Database Connection
-const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/gamify_platform";
+// Ensure your .env MONGO_URI includes /gamify_platform before the '?'
+const dbURI = process.env.MONGO_URI;
 
 mongoose.connect(dbURI)
   .then(() => console.log("Database Connected: Ready for Quests!"))
   .catch(err => console.error("DB Connection Error:", err.message));
 
 // 5. Routes
-// Home route to confirm backend is working
-app.get("/", (req, res) => {
-  res.send("Kodemaster Backend is Live and Ready for Quests!");
-});
-
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/judge', require('./routes/judge'));
 app.use('/api/user', require('./routes/user'));
@@ -64,5 +39,6 @@ app.use('/api/oops', require('./routes/oops'));
 app.use('/api/dbms', require('./routes/dbms'));
 app.use('/api/os', require('./routes/os'));
 
-const PORT = process.env.PORT || 5000;
+ 
+const PORT = process.env.PORT||5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
