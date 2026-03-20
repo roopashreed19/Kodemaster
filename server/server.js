@@ -16,11 +16,11 @@ const allowedOrigins = [
   "http://localhost:3001"
 ];
 
+// Consolidated CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // Allow requests with no origin (like mobile apps or curl) or if in allowed list
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -28,11 +28,11 @@ app.use(cors({
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  // UPDATED: Added x-auth-token to the allowed headers
-  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"]
+  // Explicitly allowing x-auth-token for your JWT authentication
+  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"] 
 }));
 
-// Important: Explicitly handle Preflight requests for all routes
+// This line handles the "test" (OPTIONS) preflight requests from the browser
 app.options('*', cors());
 
 app.use(express.json());
@@ -49,6 +49,11 @@ mongoose.connect(dbURI)
   .catch(err => console.error("DB Connection Error:", err.message));
 
 // 5. Routes
+// Home route to confirm backend is working
+app.get("/", (req, res) => {
+  res.send("Kodemaster Backend is Live and Ready for Quests!");
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/judge', require('./routes/judge'));
 app.use('/api/user', require('./routes/user'));
