@@ -37,7 +37,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="/world/dsa" element={<DSADungeon />} />
-        <Route path="/arena/dsa/:floorId/:questionId" element={<BattleArena />} />
+        <Route path="/arena/:subject/:floorId/:questionId" element={<BattleArena />} />
 
         <Route path="/world/os" element={<OSOutpost />} />
         <Route path="/briefing/:subject/:floorId" element={<SectorBriefing />} />
@@ -64,8 +64,6 @@ function App() {
         <Route path="/games/pacman" element={<Pacman />} />
         <Route path="/games/wordsearch" element={<CipherSearch />} />
 
-        {/* Generic arena route from incoming changes */}
-        <Route path="/arena/:subject/:floorId/:questionId" element={<BattleArena />} />
 
         {/* Error route from existing changes */}
         <Route path="*" element={<div className="error-screen">404: SECTOR NOT FOUND</div>} />
