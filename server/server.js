@@ -1,4 +1,3 @@
-
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
@@ -6,24 +5,42 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+
 // 1. Initialize App
 const app = express();
 
-// 2. Middleware (MUST come before routes)
-app.use(express.json());
-app.use(cookieParser());
+// 2. Middleware & CORS Configuration
+const allowedOrigins = [
+  "https://kodemaster-phi.vercel.app",
+  "http://localhost:3000",
+  "http://localhost:3001"
+];
+
 app.use(cors({
-  origin: ["https://kodemaster-phi.vercel.app",'http://localhost:3000', 'http://localhost:3001'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
+// Important: Explicitly handle Preflight requests for all routes
+app.options('*', cors());
+
+app.use(express.json());
+app.use(cookieParser());
+
 // 3. Debugging Logs
 console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
 
 // 4. Database Connection
-// Ensure your .env MONGO_URI includes /gamify_platform before the '?'
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/gamify_platform";
 
 mongoose.connect(dbURI)
@@ -41,6 +58,5 @@ app.use('/api/oops', require('./routes/oops'));
 app.use('/api/dbms', require('./routes/dbms'));
 app.use('/api/os', require('./routes/os'));
 
- 
-const PORT = process.env.PORT||5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
