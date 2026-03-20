@@ -41,4 +41,9 @@ app.use('/api/os', require('./routes/os'));
 
  
 const PORT = process.env.PORT||5000;
+app.get('/', (req, res) => {
+  res.json({
+    msg:"Backend is running"
+  })
+})
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
