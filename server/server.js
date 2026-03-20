@@ -28,7 +28,8 @@ app.use(cors({
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  // UPDATED: Added x-auth-token to the allowed headers
+  allowedHeaders: ["Content-Type", "Authorization", "x-auth-token"]
 }));
 
 // Important: Explicitly handle Preflight requests for all routes
