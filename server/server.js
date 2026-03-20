@@ -33,7 +33,7 @@ app.use(cors({
 }));
 
 // This line handles the "test" (OPTIONS) preflight requests from the browser
-app.options('*', cors());
+app.options('(.*)', cors());
 
 app.use(express.json());
 app.use(cookieParser());
