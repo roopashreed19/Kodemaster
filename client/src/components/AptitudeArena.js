@@ -230,7 +230,7 @@ const AptitudeArena = () => {
           </div>
         )}
 
-        {/* PHASE 3: RESULT */}
+
         {activePhase === 'result' && (
           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ textAlign: 'center', padding: '60px', background: '#1e293b', borderRadius: '24px' }}>
             <Star size={80} color="#fbbf24" fill="#fbbf24" style={{ margin: '0 auto 20px' }} />

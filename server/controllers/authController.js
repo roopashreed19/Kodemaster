@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
 
     jwt.sign(payload, secret, { expiresIn: '7d' }, (err, token) => {
       if (err) {
-        console.error("❌ JWT Login Error:", err);
+        console.error("JWT Login Error:", err);
         return res.status(500).json({ msg: "Server error" });
       }
       res.json({ token });

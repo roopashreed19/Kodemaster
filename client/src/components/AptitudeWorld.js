@@ -33,7 +33,7 @@ const AptitudeWorld = () => {
       overflowX: 'hidden'
     }}>
 
-      {/* Background Ambient Glow */}
+    
       <div style={{
         position: 'absolute',
         top: '-10%',
@@ -45,7 +45,7 @@ const AptitudeWorld = () => {
         pointerEvents: 'none'
       }} />
 
-      {/* Navigation - Left Aligned */}
+     
       <div className="sticky-nav">
         <button
           onClick={() => navigate('/dashboard')}
@@ -69,7 +69,7 @@ const AptitudeWorld = () => {
         </button>
       </div>
 
-      {/* Header - Left Aligned to match DBMS screen */}
+     
       <header style={{ textAlign: 'left', marginBottom: '60px', maxWidth: '1200px', margin: '0 auto 60px' }}>
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <div style={{
@@ -182,7 +182,7 @@ const AptitudeWorld = () => {
   );
 };
 
-// Simple internal helper for the icons
+
 const BoxIcon = ({ size }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" /></svg>
 );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Ghost, LogOut } from 'lucide-react'; // Added LogOut icon
+import { LayoutDashboard, Ghost, LogOut } from 'lucide-react';
 import api from '../../utils/api';
 
 const GRID_SIZE = 15;

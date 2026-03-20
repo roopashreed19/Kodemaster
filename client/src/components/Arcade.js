@@ -16,13 +16,13 @@ const games = [
     name: 'Neural Tic-Tac-Toe', 
     icon: <Grid3X3 />, 
     color: '#60a5fa', 
-    xp: '50 XP for Win' // Updated to match the "Hard" difficulty reward
+    xp: '50 XP for Win'
   },
   { 
     id: 'wordle', 
     name: 'Wordle.Core', 
     icon: <Type />, 
-    color: '#22c55e', // Green for Wordle
+    color: '#22c55e', 
     xp: '40 XP for Win' 
   },
   { 
@@ -40,7 +40,7 @@ const games = [
   xp: '60 XP for Clear' 
 },
 { 
-    id: 'wordsearch', // This ID must match the end of your Route path in App.js
+    id: 'wordsearch', 
     name: 'Cipher Search', 
     icon: <Search />, 
     color: '#22c55e', 
@@ -91,7 +91,7 @@ const Arcade = () => {
               cursor: 'pointer',
               boxShadow: `0 0 20px ${game.color}11`
             }}
-            // Note: Make sure your Route in App.js matches this path structure!
+            
             onClick={() => navigate(`/games/${game.id}`)}
           >
             <div style={{ color: game.color, marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
