@@ -2,6 +2,97 @@ const mongoose = require('mongoose');
 // Standardizing to lowercase to match your folder structure and avoid casing crashes
 const Challenge = require('./models/challenges'); 
 require('dotenv').config();
+const arrayAbyssQuests = [
+  {
+    subject: "dsa",
+    floorId: "floor1",
+    floorName: "Array Abyss",
+    id: "q1",
+    title: "The Sliding Window Serpent",
+    difficulty: "Easy",
+    xp: 50,
+    description: "Given an array of integers and a number k, find the maximum sum of any contiguous subarray of size k.",
+    logic: "Instead of recalculating the sum for every window, subtract the element leaving the window and add the one entering it. This maintains O(n) complexity.",
+    testCases: [
+      { input: "[2, 1, 5, 1, 3, 2], 3", expected: "9" },
+      { input: "[2, 3, 4, 1, 5], 2", expected: "7" }
+    ],
+    defaultCode: {
+      javascript: "function solve(nums, k) {\n  let maxSum = 0;\n  // Your logic here\n  return maxSum;\n}",
+      python: "def solve(nums, k):\n    max_sum = 0\n    return max_sum"
+    }
+  },
+  {
+    subject: "dsa",
+    floorId: "floor1",
+    floorName: "Array Abyss",
+    id: "q2",
+    title: "Two-Sum Sentinel",
+    difficulty: "Easy",
+    xp: 50,
+    description: "Given an array of integers and a target, return indices of the two numbers such that they add up to the target.",
+    logic: "Use a Hash Map to store numbers you've already seen. For every number 'x', check if 'target - x' exists in your map.",
+    testCases: [
+      { input: "[2, 7, 11, 15], 9", expected: "0,1" },
+      { input: "[3, 2, 4], 6", expected: "1,2" }
+    ],
+    defaultCode: {
+      javascript: "function solve(nums, target) {\n  // return [index1, index2]\n}",
+      python: "def solve(nums, target):\n    # logic here"
+    }
+  },
+  {
+    subject: "dsa",
+    floorId: "floor1",
+    floorName: "Array Abyss",
+    id: "q3",
+    title: "The Zero-Sum Phantom",
+    difficulty: "Medium",
+    xp: 100,
+    description: "Find if there is a contiguous subarray whose sum equals 0. Return true or false.",
+    logic: "Use the Prefix Sum technique. If a sum repeats, it means the elements in between summed to zero.",
+    testCases: [
+      { input: "[4, 2, -3, 1, 6]", expected: "true" }
+    ],
+    defaultCode: {
+      javascript: "function solve(nums) {\n  return false;\n}"
+    }
+  },
+  {
+    subject: "dsa",
+    floorId: "floor1",
+    floorName: "Array Abyss",
+    id: "q4",
+    title: "The Dutch Flag Duel",
+    difficulty: "Medium",
+    xp: 100,
+    description: "Sort an array of 0s, 1s, and 2s in-place (red, white, and blue).",
+    logic: "Use three pointers (low, mid, high) to partition the array in a single pass.",
+    testCases: [
+      { input: "[2, 0, 2, 1, 1, 0]", expected: "0,0,1,1,2,2" }
+    ],
+    defaultCode: {
+      javascript: "function solve(nums) {\n  return nums;\n}"
+    }
+  },
+  {
+    subject: "dsa",
+    floorId: "floor1",
+    floorName: "Array Abyss",
+    id: "q5",
+    title: "The Trapping Rain Titan",
+    difficulty: "Hard",
+    xp: 200,
+    description: "Compute how much water an elevation map can trap after raining.",
+    logic: "Use two pointers at both ends of the array. Track left_max and right_max to calculate the water at each index.",
+    testCases: [
+      { input: "[0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]", expected: "6" }
+    ],
+    defaultCode: {
+      javascript: "function solve(height) {\n  return 0;\n}"
+    }
+  }
+];
 
 const stringSanctumQuests = [
   {
@@ -421,6 +512,7 @@ const seedDB = async () => {
     const floorsToSeed = ["floor3", "floor4", "floor5", "floor6", "floor7", "floor8", "floor9", "floor10"];
     await Challenge.deleteMany({ floorId: { $in: floorsToSeed } });
     
+    await Challenge.insertMany(arrayAbyssQuests);
     await Challenge.insertMany(remainingQuests);
     await Challenge.insertMany(stringSanctumQuests);
     await Challenge.insertMany(recursionRiftQuests);

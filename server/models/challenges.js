@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const ChallengeSchema = new mongoose.Schema({
     subject: { type: String, required: true }, 
     floorId: { type: String, required: true }, 
