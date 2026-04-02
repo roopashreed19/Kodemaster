@@ -6,29 +6,28 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-// 1. Initialize App
 const app = express();
 
-// 2. Middleware (MUST come before routes)
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
   origin: [process.env.frontendurl,process.env.backendurl],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
-// 3. Debugging Logs
+
 console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
 
-// 4. Database Connection
-// Ensure your .env MONGO_URI includes /gamify_platform before the '?'
+
 const dbURI = process.env.MONGO_URI;
 
 mongoose.connect(dbURI)
   .then(() => console.log("Database Connected: Ready for Quests!"))
   .catch(err => console.error("DB Connection Error:", err.message));
 
-// 5. Routes
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/judge', require('./routes/judge'));
 app.use('/api/user', require('./routes/user'));
