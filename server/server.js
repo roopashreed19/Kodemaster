@@ -11,7 +11,10 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors());
+app.use(cors({
+  origin: "https://kodemaster-phi.vercel.app",
+  credentials: true
+}));
 
 
 console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
