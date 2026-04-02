@@ -11,11 +11,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin: "*",
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  //credentials: true
-}));
+app.use(cors());
 
 
 console.log("Checking URI...", process.env.MONGO_URI ? "found" : "NOT FOUND");
